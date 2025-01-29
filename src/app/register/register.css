@@ -1,0 +1,36 @@
+.container{
+    @apply my-20 mx-auto 
+}
+.regform{
+    @apply  flex-grow
+}
+.frm{
+    @apply border shadow-lg p-5  w-[95%] mx-auto items-center translate-y-2 
+}
+.img{
+    @apply w-[40%] h-[500px]
+}
+.img img{
+    @apply h-full
+}
+.lepinp{
+    @apply  leading-[30px] mb-6 
+
+}
+.lepinp input{
+    @apply  border-blue-400 border leading-9 rounded-2xl py-3  w-[50%] focus:shadow-md focus:shadow-blue-400 focus:border-red-600
+
+} 
+.lepinp label{
+    @apply  mr-10 w-[20%] inline-block font-bold font-serif text-lg
+
+}
+
+.lepinp select{
+    @apply border-blue-400 border leading-9  py-3 w-[50%] rounded-2xl font-sans text-lg font-bold
+
+}
+.lepinp select option{
+    @apply   font-sans text-sm font-bold
+
+}
