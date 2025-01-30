@@ -13,17 +13,9 @@ import {
 import ErrorMessageForLoginPage from "./ErrorMessageForLoginPage";
 import { stage } from "./ErrorMessageForLoginPage";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../../Redux Toolkit/Slices/auth/authSlice";
-import { useRouter } from "next/router";
+import { setCredentials } from "../../lib/Slices/auth/authSlice";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-// Function to get value from localStorage and handle SSR
-export const getInitialStateFromLocalStorage = () => {
-  if (typeof window !== "undefined") {
-    const userToken = localStorage.getItem("userToken"); // Use localStorage safely
-    return userToken ? JSON.parse(userToken) : null; // Return parsed value from localStorage or null
-  }
-  return null; // Default state if not in a client environment
-};
 function Login() {
   console.log("render LoginPage");
   const dispatchStore = useDispatch();
@@ -88,31 +80,22 @@ function Login() {
               passwordInputRef.current?.value,
               dispatch
             );
-            if (!loginState.loggedIn.value) {
-              if (loginState.number_of_failed_trials.value >= 5) {
-                console.log("salem");
-              }
-            } else {
-              if (
-                loginState.loggedIn.value &&
-                loginState.email.value !== "" &&
-                loginState.password.value !== ""
-              ) {
-                console.log("submmitted successfully");
-                setCredentialsExistInSystem(loginState.email.value);
-                dispatchStore(
-                  setCredentials({ id: 1, email: loginState.email })
-                );
-              } else {
-                setErrorMessageShowed(true);
-                setStageAnimations(stage.first);
+            if (
+              !loginState.loggedIn.value &&
+              loginState.number_of_failed_trials.value < 5
+            ) {
+              setErrorMessageShowed(true);
+              setStageAnimations(stage.first);
+              setTimeout(() => {
+                setStageAnimations(stage.second);
                 setTimeout(() => {
-                  setStageAnimations(stage.second);
-                  setTimeout(() => {
-                    setErrorMessageShowed(false);
-                  }, 500);
-                }, 2000);
-              }
+                  setErrorMessageShowed(false);
+                }, 500);
+              }, 2000);
+            } else {
+              console.log("submmitted successfully");
+              // setCredentialsExistInSystem(loginState.email.value);
+              // dispatchStore(setCredentials({ id: 1, email: loginState.email }));
             }
           }}
         >
@@ -219,14 +202,14 @@ function Login() {
           <div className="px-2 flex items-center gap-2 bg-transparent h-[15%] md:h-[20%] my-auto">
             <div className="px-2 flex gap-2 bg-transparent h-[90%] my-auto w-3/4">
               <Link
-                href={"/register"}
+                href={"/forgot-password"}
                 onClick={(event) => {
                   event.preventDefault();
                   router.push("/forgot-password");
                 }}
               >
                 <button
-                  className="w-[95%] p-2 h-full rounded-md text-white text-[14px] sm:text-[18px] md:text-[24px] lg:text-[12px] xl:text-[17px]
+                  className="w-[95%] p-2 h-full rounded-md text-white text-[14px] sm:text-[18px] md:text-[14px] lg:text-[12px] xl:text-[17px]
                              bg-red-600 hover:bg-red-700
                               font-sans font-bold
                               flex items-center justify-center
@@ -239,10 +222,10 @@ function Login() {
                 href={"/register"}
                 onClick={(event) => {
                   event.preventDefault();
-                  router.push("/forgot-username");
+                  router.push("/login");
                 }}
               >
-                <button className="w-[95%] p-2 h-full rounded-md  bg-red-600 hover:bg-red-700 font-sans font-bold text-white text-[14px] sm:text-[18px] md:text-[24px] lg:text-[12px] xl:text-[17px]">
+                <button className="w-[95%] p-2 h-full rounded-md  bg-red-600 hover:bg-red-700 font-sans font-bold text-white text-[14px] sm:text-[18px] md:text-[14px] lg:text-[12px] xl:text-[17px]">
                   Forgot Username ?
                 </button>
               </Link>
@@ -251,8 +234,8 @@ function Login() {
             <button
               className={
                 disableSubmmitButton
-                  ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[20%] md:w-[17%] xl:w-[21%] rounded-md text-white sm:text-[17px] md:text-[12px] lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
-                  : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[20%] md:w-[17%] xl:w-[21%] rounded-md text-white sm:text-[17px] md:text-[12px] lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-blue-800 hover:bg-blue-900"
+                  ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[20%] md:w-[17%] xl:w-[21%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
+                  : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[20%] md:w-[17%] xl:w-[21%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-blue-800 hover:bg-blue-900"
               }
               type="submit"
               disabled={disableSubmmitButton}
@@ -263,7 +246,7 @@ function Login() {
           </div>
         </form>
       </div>
-      <div className="absolute bottom-0 left-0">
+      <div className="z-20 absolute bottom-5 left-4">
         <ErrorMessageForLoginPage
           ErrorMessageShowed={ErrorMessageShowed}
           errorMessage={errorMessage}

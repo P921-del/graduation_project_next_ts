@@ -1,10 +1,11 @@
+"use client";
 import React, { useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
 import "../../Styles/register.css";
-import { onlyAlphabetical } from "../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
+import { onlyAlphabetical } from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
 import SubmitButton from "./submitButton";
+import { useRouter } from "next/router";
 const Register: React.FC = () => {
   const registerForm = useRef<HTMLFormElement>(null);
   const initialState = {
@@ -13,10 +14,11 @@ const Register: React.FC = () => {
     isSubmitted: false,
   };
   const [submitButtonStatus, setSubmitButtonStatus] = useState(initialState);
-  const login = useNavigate();
-
-  function HandleSubmitButton(arg) {
-    registerForm.current?.dispatchEvent(new Event("submit"));
+  const router = useRouter();
+  function HandleSubmitButton(arg: boolean) {
+    if (arg === true) {
+      registerForm.current?.dispatchEvent(new Event("submit"));
+    }
   }
   const formik = useFormik({
     initialValues: {
@@ -64,7 +66,7 @@ const Register: React.FC = () => {
             isSubmitted: false,
           });
           formik.resetForm();
-          login("/login");
+          router.push("/login");
         }, 2000);
         console.log("Form data", values);
       }, 3000);
@@ -247,7 +249,7 @@ const Register: React.FC = () => {
                           hover:underline hover:text-blue-300
                            flex items-center justify-center
                           "
-                  onClick={() => login("/login")}
+                  onClick={() => router.push("/login")}
                 >
                   Log in!
                 </button>

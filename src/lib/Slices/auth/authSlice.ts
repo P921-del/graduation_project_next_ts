@@ -1,27 +1,29 @@
+"use client";
 import { createSlice } from "@reduxjs/toolkit";
-import { getInitialStateFromLocalStorage } from "@/components/Account Pages/Login";
 export interface user {
   userInfo: object | null;
-  userToken: string | null;
+  userToken: string;
 }
-const userToken = getInitialStateFromLocalStorage(); // initialize userToken from local storage
 const initialState: user = {
   userInfo: {}, //for user object
-  userToken, //for storing the JWT token
+  userToken: window.localStorage.getItem("userToken")
+    ? String(window.localStorage.getItem("userToken"))
+    : "", //for storing the JWT token
 };
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     logout: (state: user) => {
-      localStorage.removeItem("userToken"); //deletes userToken from localStorage
+      window.localStorage.removeItem("userToken"); //deletes userToken from localStorage
       state.userInfo = null;
-      state.userToken = null;
+      state.userToken = "";
     },
     setCredentials: (state: user, { payload }) => {
+      window.localStorage.setItem("userToken", payload.userToken);
       state.userInfo = payload;
       state.userToken = payload.userToken;
-      localStorage.setItem("userToken", payload.userToken);
     },
   },
 });

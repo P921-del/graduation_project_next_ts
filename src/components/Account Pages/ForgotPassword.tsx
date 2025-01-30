@@ -1,4 +1,5 @@
-import "../../Styles/register.css";
+"use client";
+import "../../styles/register.css";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { TiCancel } from "react-icons/ti";
@@ -6,22 +7,18 @@ import { MdEditDocument } from "react-icons/md";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
 import ForgotPasswordReducer, {
   initialStateForgotPassword,
-} from "../../Reducers/ForgotPasswordReducer/ForgotPasswordReducer.ts";
-import ErrorMessageForLoginPage, {
-  stage,
-} from "./ErrorMessageForLoginPage.tsx";
+} from "../../Reducers/ForgotPasswordReducer/ForgotPasswordReducer";
+import ErrorMessageForLoginPage, { stage } from "./ErrorMessageForLoginPage";
 import {
   changePasswordUsingUserNameAndPassword,
   changePasswordUsingEmailAndPassword,
-} from "../ExternalFunctions/AccountFunctions/Account.ts";
-import { actionTypes } from "../../Reducers/ForgotPasswordReducer/ForgotPasswordActionTypes.ts";
-import ForgotPasswordSuccessMessage from "./ForgotPasswordSuccessMessage.tsx";
-type Props = {};
-
-function ForgotPassword({}: Props) {
+} from "../../ExternalFunctions/AccountFunctions/Account";
+import { actionTypes } from "../../Reducers/ForgotPasswordReducer/ForgotPasswordActionTypes";
+import ForgotPasswordSuccessMessage from "./ForgotPasswordSuccessMessage";
+import { useRouter } from "next/navigation";
+function ForgotPassword() {
   const ForgotPasswordForm = useRef<HTMLFormElement>(null);
   const [showPassword, setShowPassword] = useState<false | boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<
@@ -31,7 +28,7 @@ function ForgotPassword({}: Props) {
     ForgotPasswordReducer,
     initialStateForgotPassword
   );
-  const login = useNavigate();
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -49,7 +46,9 @@ function ForgotPassword({}: Props) {
         .required("Confirm Password is required")
         .oneOf([Yup.ref("newPassword"), ""], "Passwords must match"),
     }),
-    onSubmit: (values) => {},
+    onSubmit: (values) => {
+      console.log(values);
+    },
   });
   const [stageAnimations, setStageAnimations] = useState<
     stage.first | stage.second
@@ -105,7 +104,7 @@ function ForgotPassword({}: Props) {
                       setSuccessMessageShowed(false);
                       setStageAnimations(stage.first);
                       setTimeout(() => {
-                        login("/login");
+                        router.push("/login");
                       }, 1000);
                     }, 500);
                   }, 2000);
@@ -155,7 +154,7 @@ function ForgotPassword({}: Props) {
                       setSuccessMessageShowed(false);
                       setStageAnimations(stage.first);
                       setTimeout(() => {
-                        login("/login");
+                        router.push("/login");
                       }, 1000);
                     }, 500);
                   }, 2000);
@@ -387,7 +386,7 @@ function ForgotPassword({}: Props) {
                            flex items-center justify-center
                            "
               type="button"
-              onClick={() => login("/login")}
+              onClick={() => router.push("/login")}
             >
               <TiCancel className="text-2xl inline-block" />
               <span>cancel</span>

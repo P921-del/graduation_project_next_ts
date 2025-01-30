@@ -1,8 +1,9 @@
+"use client";
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { slideInLeft, slideOutRight, fadeOutRight } from "react-animations";
+import { slideInLeft, fadeOutRight } from "react-animations";
 import { FiCheck } from "react-icons/fi";
-import { stage } from "./ErrorMessageForLoginPage.tsx";
+import { stage } from "./ErrorMessageForLoginPage";
 type Props = {
   SuccessMessageShowed: boolean;
   successMessage: string;

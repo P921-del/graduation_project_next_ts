@@ -1,6 +1,6 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
-import { backendURL } from "../../Redux Toolkit/Slices/auth/authRules";
+import { backendURL } from "../../lib/Slices/auth/authRules";
 const checkEmailExistInSystem: () => Promise<boolean> = async () => {
   const response = await fetch("link");
   const data = await response.json();
@@ -19,6 +19,7 @@ export const setCredentialsExistInSystem: (
   const response = await fetch(backendURL + email);
   const data = await response.json();
   const dataWithToken: object = JSON.parse(JSON.stringify(data));
+  localStorage.setItem("userToken", JSON.stringify(dataWithToken));
   return dataWithToken;
 };
 export const changePasswordUsingUserNameAndPassword: (

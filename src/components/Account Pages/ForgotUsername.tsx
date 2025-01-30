@@ -1,8 +1,7 @@
+"use client";
 import React from "react";
 
-type Props = {};
-
-function ForgotUsername({}: Props) {
+function ForgotUsername() {
   return <div>ForgotUsername</div>;
 }
 
