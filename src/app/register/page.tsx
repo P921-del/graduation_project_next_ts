@@ -1,11 +1,11 @@
-
-import Registercomp from "@/components/Registercomp"
-import { Metadata } from "next"
-export  function generateMetadata():Metadata{
-    return{
-        title:"Register"
-    }
+import Registercomp from "@/components/Registercomp";
+import RegisterComponent from "@/components/Account Pages/Register";
+import { Metadata } from "next";
+export function generateMetadata(): Metadata {
+  return {
+    title: "Register",
+  };
 }
-export default function Register(){
-        return <Registercomp/>
+export default function Register() {
+  return <RegisterComponent />;
 }

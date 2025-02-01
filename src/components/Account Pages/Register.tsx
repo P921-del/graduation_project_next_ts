@@ -3,10 +3,36 @@ import React, { useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import "../../Styles/register.css";
-import { onlyAlphabetical } from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
+import {
+  onlyAlphabetical,
+  onlyNumbers,
+} from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
 import SubmitButton from "./submitButton";
-import { useRouter } from "next/router";
-const Register: React.FC = () => {
+import { useRouter } from "next/navigation";
+
+const RegisterComponent: React.FC = () => {
+  const initialStateImageFile = {
+    showErrorMessageforAllowedFile: false,
+    errorMessageforAllowedFile: "",
+  };
+  const [allowedImageFile, setAllowedImageFile] = useState(
+    initialStateImageFile
+  );
+  const HandleUploadImageFile = (fileValue: string) => {
+    const _extensions = [".png", ".jpg", ".jpeg"];
+    if (fileValue !== null) {
+      const allowedFile = _extensions.includes(fileValue.toString());
+      if (!allowedFile) {
+        setAllowedImageFile({
+          showErrorMessageforAllowedFile: true,
+          errorMessageforAllowedFile:
+            "Only PNG , JPG and JPEG images are allowed.",
+        });
+      } else {
+        setAllowedImageFile(initialStateImageFile);
+      }
+    }
+  };
   const registerForm = useRef<HTMLFormElement>(null);
   const initialState = {
     loading: false,
@@ -22,18 +48,19 @@ const Register: React.FC = () => {
   }
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      Name: "",
+      phoneNumber: "",
       userName: "",
       email: "",
       confirmEmail: "",
       role: "",
       password: "",
       confirmPassword: "",
+      address: "",
     },
     validationSchema: Yup.object().shape({
-      firstName: Yup.string().required("firstName is required"),
-      lastName: Yup.string().required("lastName is required"),
+      Name: Yup.string().required("firstName is required"),
+      phoneNumber: Yup.string().required("phoneNumber is required"),
       userName: Yup.string().required("Username is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
       confirmEmail: Yup.string()
@@ -46,6 +73,7 @@ const Register: React.FC = () => {
       confirmPassword: Yup.string()
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), ""], "Passwords must match"),
+      address: Yup.string().required("Address is required"),
     }),
     onSubmit: (values) => {
       setSubmitButtonStatus({
@@ -79,7 +107,8 @@ const Register: React.FC = () => {
         <div className="registercont flex">
           <div className="img">
             <img
-              src="../../../assests/signUpBackground.webp"
+              className="w-full h-full"
+              src="/assets/Images/register3.jpeg"
               alt="signUpBackground_Image"
             />
           </div>
@@ -91,43 +120,51 @@ const Register: React.FC = () => {
             >
               <div className="grouping">
                 <div className="each_in_grouping">
-                  <label htmlFor="firstName">First Name:</label>
+                  <label htmlFor="firstName">
+                    Name<span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <input
-                    value={formik.values.firstName}
+                    value={formik.values.Name}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     onKeyDown={(event) => {
                       onlyAlphabetical(event);
                     }}
                     type="text"
-                    id="firstName"
+                    id="Name"
                     name="firstName"
                   />
-                  {formik.touched.firstName && formik.errors.firstName ? (
-                    <span className="errors">{formik.errors.firstName}</span>
+                  {formik.touched.Name && formik.errors.Name ? (
+                    <span className="errors">{formik.errors.Name}</span>
                   ) : null}
                 </div>
                 <div className="each_in_grouping">
-                  <label htmlFor="lastName">Last Name:</label>
+                  <label htmlFor="phoneNumber">
+                    Phone Number<span className="text-2xl text-red-500">*</span>
+                    :
+                  </label>
                   <input
-                    value={formik.values.lastName}
+                    value={formik.values.phoneNumber}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     onKeyDown={(event) => {
-                      onlyAlphabetical(event);
+                      onlyNumbers(event);
                     }}
                     type="text"
-                    id="lastName"
-                    name="lastName"
+                    id="phoneNumber"
+                    name="phoneNumber"
                   />
-                  {formik.touched.lastName && formik.errors.lastName ? (
-                    <span className="errors">{formik.errors.lastName}</span>
+                  {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                    <span className="errors">{formik.errors.phoneNumber}</span>
                   ) : null}
                 </div>
               </div>
               <div className="grouping">
                 <div className="each_in_grouping">
-                  <label htmlFor="email">Email Address:</label>
+                  <label htmlFor="email">
+                    Email Address
+                    <span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <input
                     value={formik.values.email}
                     onChange={formik.handleChange}
@@ -144,7 +181,8 @@ const Register: React.FC = () => {
                 </div>
                 <div className="each_in_grouping">
                   <label htmlFor="ConfirmEmailAddress">
-                    Confirm Email Address:
+                    Confirm Email Address
+                    <span className="text-2xl text-red-500">*</span>:
                   </label>
                   <input
                     value={formik.values.confirmEmail}
@@ -163,7 +201,9 @@ const Register: React.FC = () => {
               </div>
               <div className="grouping">
                 <div className="each_in_grouping">
-                  <label htmlFor="user">UserName</label>
+                  <label htmlFor="user">
+                    UserName<span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <input
                     value={formik.values.userName}
                     onChange={formik.handleChange}
@@ -177,7 +217,9 @@ const Register: React.FC = () => {
                   ) : null}
                 </div>
                 <div className="each_in_grouping">
-                  <label htmlFor="role">User Kind</label>
+                  <label htmlFor="role">
+                    User Kind<span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <select
                     value={formik.values.role}
                     onChange={formik.handleChange}
@@ -195,9 +237,11 @@ const Register: React.FC = () => {
                   ) : null}
                 </div>
               </div>
-              <div className="grouping pb-6 border-b border-b-slate-300 ">
+              <div className="grouping pb-6">
                 <div className="each_in_grouping">
-                  <label htmlFor="pass">Password</label>
+                  <label htmlFor="pass">
+                    Password<span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <input
                     value={formik.values.password}
                     onChange={formik.handleChange}
@@ -213,7 +257,10 @@ const Register: React.FC = () => {
                   ) : null}
                 </div>
                 <div className="each_in_grouping">
-                  <label htmlFor="confirmPassword">confirmPassword</label>
+                  <label htmlFor="confirmPassword">
+                    confirmPassword
+                    <span className="text-2xl text-red-500">*</span>:
+                  </label>
                   <input
                     value={formik.values.confirmPassword}
                     onChange={formik.handleChange}
@@ -228,6 +275,45 @@ const Register: React.FC = () => {
                   formik.errors.confirmPassword ? (
                     <span className="errors">
                       {formik.errors.confirmPassword}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              <div className="grouping pb-6 border-b border-b-slate-300 ">
+                <div className="each_in_grouping">
+                  <label htmlFor="pass">ِAddres(optional):</label>
+                  <input
+                    value={formik.values.address}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    type="text"
+                    id="address"
+                    name="address"
+                  />
+                  {formik.touched.address && formik.errors.address ? (
+                    <span className="errors">{formik.errors.address}</span>
+                  ) : null}
+                </div>
+                <div className="each_in_grouping">
+                  <label htmlFor="image">
+                    Upload Your Image here (optional):
+                  </label>
+                  <input
+                    onChange={(event) => {
+                      HandleUploadImageFile(event?.target.value);
+                    }}
+                    onBlur={(event) => {
+                      HandleUploadImageFile(event?.target.value);
+                    }}
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg, image/png, image/jpg"
+                  />
+                  {allowedImageFile.showErrorMessageforAllowedFile &&
+                  allowedImageFile.errorMessageforAllowedFile ? (
+                    <span className="errors">
+                      {allowedImageFile.errorMessageforAllowedFile}
                     </span>
                   ) : null}
                 </div>
@@ -265,4 +351,4 @@ const Register: React.FC = () => {
     </div>
   );
 };
-export default Register;
+export default RegisterComponent;

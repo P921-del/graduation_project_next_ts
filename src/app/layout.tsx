@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Provider } from "react-redux";
 import { store } from "@/lib/store";
+import { usePathname } from "next/navigation";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,20 +24,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   return (
     <Provider store={store}>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <div>
-            {" "}
-            <Navbar />
-          </div>
+          {pathname === "/unauthorized" ? null : (
+            <div>
+              {" "}
+              <Navbar />
+            </div>
+          )}
+
           <div>{children}</div>
-          <div>
-            <Footer />
-          </div>
+          {pathname === "/unauthorized" ? null : (
+            <div>
+              <Footer />
+            </div>
+          )}
         </body>
       </html>
     </Provider>

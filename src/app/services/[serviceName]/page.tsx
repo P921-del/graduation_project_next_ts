@@ -1,26 +1,33 @@
-import { Metadata } from 'next';
+import Restaurants from "@/components/Restaurants/Restaurants";
+import { Metadata } from "next";
 
 type Props = {
-    params: {
-      serviceName: String;
-    };
+  params: {
+    serviceName: string;
   };
-
+};
+enum ServiceType {
+  Schools = "schools",
+  Hospitals = "hospitals",
+  Restaurants = "restaurants",
+  Clinics = "clinics",
+}
 // Metadata function
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { serviceName } = params;  
+  const { serviceName } = params;
   return {
-    title: `${serviceName}`, 
+    title: `${serviceName}`,
   };
 }
 
 // Page Component
 export default function Service({ params }: Props) {
-  const { serviceName } = params; 
-
-  return (
-    <div>
-      <h1>Welcome to the {serviceName} service</h1>
-    </div>
-  );
+  const { serviceName } = params;
+  if (serviceName === ServiceType.Restaurants) {
+    return (
+      <div>
+        <Restaurants />
+      </div>
+    );
+  }
 }
