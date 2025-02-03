@@ -1,31 +1,34 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import Restaurant from "./Restaurant";
-function FeaturedRestaurantsPartners() {
-  interface Restaurant {
+import School from "./School";
+
+const AllSchools = () => {
+  interface school {
     id: number;
     name: string;
-    description: string;
+    type: string;
+    address: string;
+    phone_number: string;
   }
-  const users: Restaurant[] = [];
+  const schools: school[] = [];
   const initialState = {
     loading: false,
-    users,
+    schools,
   };
-  const [AllRestaurants, setAllRestaurants] = useState(initialState);
+  const [AllSchools, setAllSchools] = useState(initialState);
   useEffect(() => {
-    setAllRestaurants({ ...AllRestaurants, loading: true });
+    setAllSchools({ ...AllSchools, loading: true });
 
     const timeout = setTimeout(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch("/Data/all-restaurants.json");
+          const response = await fetch("/Data/all-schools.json");
           const data = await response.json();
           //first convert the json object to string json object and then convert to javascript object
           //const results = JSON.parse(data);
           //only put the results in the state (the actual users array)
-          setAllRestaurants({ users: data, loading: false });
+          setAllSchools({ schools: data, loading: false });
         } catch (error) {
           console.log("error: ", error);
         }
@@ -37,9 +40,9 @@ function FeaturedRestaurantsPartners() {
   return (
     <div className="mt-32">
       <h1 className="text-black text-4xl font-serif font-bold mb-4 text-center">
-        Featured Restaurant Partners
+        The closest government school to your location is in Assiut
       </h1>
-      {AllRestaurants.loading ? (
+      {AllSchools.loading ? (
         <div
           aria-label="Loading..."
           role="status"
@@ -126,13 +129,13 @@ function FeaturedRestaurantsPartners() {
         </div>
       ) : (
         <div className="grid grid-cols-2 grid-rows-3 w-[95%] mx-auto gap-8 h-[900px]">
-          {AllRestaurants.users?.map((restaurant) => (
-            <Restaurant key={restaurant.id} {...restaurant} />
+          {AllSchools.schools?.map((school) => (
+            <School key={school.id} {...school} />
           ))}
         </div>
       )}
     </div>
   );
-}
+};
 
-export default FeaturedRestaurantsPartners;
+export default AllSchools;

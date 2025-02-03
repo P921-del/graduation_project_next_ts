@@ -1,4 +1,5 @@
 import Restaurants from "@/components/Restaurants/Restaurants";
+import Schools from "@/components/Schools/Schools";
 import { Metadata } from "next";
 
 type Props = {
@@ -27,6 +28,12 @@ export default function Service({ params }: Props) {
     return (
       <div>
         <Restaurants />
+      </div>
+    );
+  } else if (serviceName === ServiceType.Schools) {
+    return (
+      <div>
+        <Schools />
       </div>
     );
   }

@@ -7,18 +7,18 @@ import loginReducer, {
   initialState,
 } from "../../Reducers/loginReducer/loginReducer";
 import {
+  checkCredentialsExistInSystem,
   HandelLoginSubmitButton,
-  setCredentialsExistInSystem,
 } from "../../ExternalFunctions/AccountFunctions/Account";
 import ErrorMessageForLoginPage from "./ErrorMessageForLoginPage";
 import { stage } from "./ErrorMessageForLoginPage";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "../../lib/Slices/auth/authSlice";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../lib/Slices/auth/authSlice";
 function Login() {
-  console.log("render LoginPage");
   const dispatchStore = useDispatch();
+  console.log("render LoginPage");
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<false | boolean>(false);
   const [loginState, dispatch] = useReducer(loginReducer, initialState);
@@ -93,9 +93,19 @@ function Login() {
                 }, 500);
               }, 2000);
             } else {
+              const checkCredentials = checkCredentialsExistInSystem(
+                loginState.email.value,
+                loginState.password.value
+              );
+              if ((await checkCredentials).checked) {
+                dispatchStore(
+                  setCredentials(
+                    ((await checkCredentials).data,
+                    (await checkCredentials).data?.userToken)
+                  )
+                );
+              }
               console.log("submmitted successfully");
-              // setCredentialsExistInSystem(loginState.email.value);
-              // dispatchStore(setCredentials({ id: 1, email: loginState.email }));
             }
           }}
         >

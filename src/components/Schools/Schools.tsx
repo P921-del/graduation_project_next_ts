@@ -1,23 +1,23 @@
-"use client";
 import React from "react";
+import AllSchools from "./AllSchools";
 import MainHeaderForEachComponent, {
   ImainRestaurantHeader,
 } from "../mainHeaderForEachComponent";
-import FeaturedRestaurantsPartners from "./FeaturedRestaurants";
-function Restaurants() {
+
+function Schools() {
   const mainHeaderForRestaurantComponent: ImainRestaurantHeader = {
     image:
-      "url('/assets/Restaurants/mainComponentBackgroundInRestaurantComponent.jpg')",
-    text: "Restaurant Partners",
+      "url('/assets/Schools/mainComponentBackgroundInSchoolComponent.jpg')",
+    text: "Schools In Assuit Government",
   };
   return (
     <div className="mb-8">
       <MainHeaderForEachComponent
         mainHeader={mainHeaderForRestaurantComponent}
       />
-      <FeaturedRestaurantsPartners />
+      <AllSchools />
     </div>
   );
 }
 
-export default Restaurants;
+export default Schools;

@@ -3,10 +3,7 @@ import React, { useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import "../../Styles/register.css";
-import {
-  onlyAlphabetical,
-  onlyNumbers,
-} from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
+import { onlyNumbers } from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
 import SubmitButton from "./submitButton";
 import { useRouter } from "next/navigation";
 
@@ -18,19 +15,11 @@ const RegisterComponent: React.FC = () => {
   const [allowedImageFile, setAllowedImageFile] = useState(
     initialStateImageFile
   );
-  const HandleUploadImageFile = (fileValue: string) => {
-    const _extensions = [".png", ".jpg", ".jpeg"];
-    if (fileValue !== null) {
-      const allowedFile = _extensions.includes(fileValue.toString());
-      if (!allowedFile) {
-        setAllowedImageFile({
-          showErrorMessageforAllowedFile: true,
-          errorMessageforAllowedFile:
-            "Only PNG , JPG and JPEG images are allowed.",
-        });
-      } else {
-        setAllowedImageFile(initialStateImageFile);
-      }
+  const [file, setFile] = useState<File | null | undefined>(undefined);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
     }
   };
   const registerForm = useRef<HTMLFormElement>(null);
@@ -48,56 +37,125 @@ const RegisterComponent: React.FC = () => {
   }
   const formik = useFormik({
     initialValues: {
-      Name: "",
+      name: "",
       phoneNumber: "",
       userName: "",
       email: "",
       confirmEmail: "",
-      role: "",
       password: "",
       confirmPassword: "",
       address: "",
     },
     validationSchema: Yup.object().shape({
-      Name: Yup.string().required("firstName is required"),
-      phoneNumber: Yup.string().required("phoneNumber is required"),
+      name: Yup.string().required("Name is required"),
+      phoneNumber: Yup.string().required("Phone number is required"),
       userName: Yup.string().required("Username is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
       confirmEmail: Yup.string()
         .required("Confirm email is required")
-        .oneOf([Yup.ref("email"), ""], "Email must match"),
-      role: Yup.string().required("Role is required"),
+        .oneOf([Yup.ref("email"), ""], "Emails must match"),
       password: Yup.string()
         .required("Password is required")
-        .min(8, "Password must be at least 8 characters long"),
+        .min(8, "Password must be at least 8 characters long")
+        .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+        .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+        .matches(/[0-9]/, "Password must contain at least one number")
+        .matches(
+          /[@$!%*?&]/,
+          "Password must contain at least one special character (@$!%*?&)"
+        ),
       confirmPassword: Yup.string()
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), ""], "Passwords must match"),
       address: Yup.string().required("Address is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       setSubmitButtonStatus({
         loading: true,
-        submitButtonText: "loading...",
+        submitButtonText: "Loading...",
         isSubmitted: true,
       });
-      setTimeout(() => {
-        setSubmitButtonStatus({
-          loading: false,
-          submitButtonText: "submited successfully",
-          isSubmitted: true,
-        });
-        setTimeout(() => {
+
+      try {
+        const chekEmail = await fetch(
+          `http://citypulse.runasp.net/api/User/IsEmailUnique?email=${values.email}`,
+          {
+            method: "GET",
+          }
+        );
+        const checkUser = await fetch(
+          `http://citypulse.runasp.net/api/User/IsUserNameUnique?userName=${values.userName}`,
+          {
+            method: "GET",
+          }
+        );
+        if (!chekEmail.ok) {
+          throw new Error("Failed to check email availability");
+        }
+        const isEmailUnique = await chekEmail.json();
+        if (isEmailUnique) {
+          alert("Email already exists. Please choose a different one.");
           setSubmitButtonStatus({
             loading: false,
             submitButtonText: "Register",
             isSubmitted: false,
           });
-          formik.resetForm();
-          router.push("/login");
-        }, 2000);
-        console.log("Form data", values);
-      }, 3000);
+          return;
+        }
+        if (!checkUser.ok) {
+          throw new Error("Failed to check username availability");
+        }
+
+        const isUserNameUnique = await checkUser.json();
+
+        if (isUserNameUnique) {
+          alert("Username already exists. Please choose a different one.");
+          setSubmitButtonStatus({
+            loading: false,
+            submitButtonText: "Register",
+            isSubmitted: false,
+          });
+          return;
+        }
+        // إنشاء FormData وإضافة البيانات إليها
+        const formData = new FormData();
+        formData.append("nameU", values.name);
+        formData.append("userName", values.userName);
+        formData.append("email", values.email);
+        formData.append("password", values.password);
+        formData.append("confirmPassword", values.confirmPassword);
+        formData.append("phoneNumber", values.phoneNumber);
+        formData.append("address", values.address);
+
+        // إضافة الصورة إذا كانت موجودة
+        if (file) {
+          formData.append("profileImage", file);
+        }
+        const response = await fetch(
+          "http://citypulse.runasp.net/api/User/register",
+          {
+            method: "POST",
+            body: formData, // إرسال البيانات كـ FormData
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to register");
+        }
+        const result = await response.json();
+        console.log("Registration successful:", result);
+        alert("Registration successful!");
+        router.push("/login");
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Registration failed");
+      } finally {
+        setSubmitButtonStatus({
+          loading: false,
+          submitButtonText: "Register",
+          isSubmitted: false,
+        });
+      }
     },
   });
 
@@ -124,18 +182,15 @@ const RegisterComponent: React.FC = () => {
                     Name<span className="text-2xl text-red-500">*</span>:
                   </label>
                   <input
-                    value={formik.values.Name}
+                    value={formik.values.name}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    onKeyDown={(event) => {
-                      onlyAlphabetical(event);
-                    }}
                     type="text"
                     id="Name"
-                    name="firstName"
+                    name="name"
                   />
-                  {formik.touched.Name && formik.errors.Name ? (
-                    <span className="errors">{formik.errors.Name}</span>
+                  {formik.touched.name && formik.errors.name ? (
+                    <span className="errors">{formik.errors.name}</span>
                   ) : null}
                 </div>
                 <div className="each_in_grouping">
@@ -216,26 +271,6 @@ const RegisterComponent: React.FC = () => {
                     <span className="errors">{formik.errors.userName}</span>
                   ) : null}
                 </div>
-                <div className="each_in_grouping">
-                  <label htmlFor="role">
-                    User Kind<span className="text-2xl text-red-500">*</span>:
-                  </label>
-                  <select
-                    value={formik.values.role}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    id="role"
-                    name="role"
-                  >
-                    <option value=" ">Select user type please</option>
-                    <option value="nUser">Normal User</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="restaurantOwner">Restaurant Owner</option>
-                  </select>
-                  {formik.touched.role && formik.errors.role ? (
-                    <span className="errors">{formik.errors.role}</span>
-                  ) : null}
-                </div>
               </div>
               <div className="grouping pb-6">
                 <div className="each_in_grouping">
@@ -299,16 +334,10 @@ const RegisterComponent: React.FC = () => {
                     Upload Your Image here (optional):
                   </label>
                   <input
-                    onChange={(event) => {
-                      HandleUploadImageFile(event?.target.value);
-                    }}
-                    onBlur={(event) => {
-                      HandleUploadImageFile(event?.target.value);
-                    }}
+                    onChange={handleFileChange}
                     type="file"
                     id="image"
                     name="image"
-                    accept="image/jpeg, image/png, image/jpg"
                   />
                   {allowedImageFile.showErrorMessageforAllowedFile &&
                   allowedImageFile.errorMessageforAllowedFile ? (

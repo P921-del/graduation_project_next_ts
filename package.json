@@ -11,8 +11,11 @@
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "@reduxjs/toolkit": "^2.5.1",
+    "axios": "^1.7.9",
     "formik": "^2.4.6",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.0.2",
+    "query-string": "^9.1.1",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-animations": "^1.0.0",
     "react-dom": "19.0.0-rc-02c0e824-20241028",

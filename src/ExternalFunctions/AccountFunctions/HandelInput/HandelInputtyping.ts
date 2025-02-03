@@ -1,6 +1,7 @@
-export function onlyAlphabetical(event: any) {
+export function onlyAlphabetical(event) {
   if (
-    isNaN(event.key.replace(/[^a-zA-Z]/gi, "").charCodeAt(0)) &&
+    (event.key.codePointAt(0) < 65 || event.key.codePointAt(0) > 90) &&
+    (event.key.codePointAt(0) < 97 || event.key.codePointAt(0) > 122) &&
     event.key.codePointAt(0) !== 32 &&
     event.key.codePointAt(0) > 31
   ) {
@@ -8,7 +9,7 @@ export function onlyAlphabetical(event: any) {
   }
 }
 
-export function onlyNumbers(event: any) {
+export function onlyNumbers(event) {
   if (
     !(
       (event.key.codePointAt(0) >= 48 && event.key.codePointAt(0) <= 57) ||

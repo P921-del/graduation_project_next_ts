@@ -1,27 +1,63 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
 import { backendURL } from "../../lib/Slices/auth/authRules";
-const checkEmailExistInSystem: () => Promise<boolean> = async () => {
-  const response = await fetch("link");
-  const data = await response.json();
-  const existingEmail: boolean = JSON.parse(JSON.stringify(data));
-  return existingEmail;
+export interface userWithToken {
+  NameU: string;
+  UserName: string;
+  Email: string;
+  Password: string;
+  ConfirmPassword: string;
+  PhoneNumber: string;
+  Address: string;
+  ProfileImage: File | null;
+  userToken: string;
+}
+export type checkCredentialsExistInSystemType = {
+  checked: boolean;
+  data: userWithToken | null;
 };
-const checkCredentialsExistInSystem: () => Promise<boolean> = async () => {
-  const response = await fetch("link2");
-  const data = await response.json();
-  const existingCredentials: boolean = JSON.parse(JSON.stringify(data));
-  return existingCredentials;
+const checkEmailExistInSystem: (
+  emailOruserName: string | undefined
+) => Promise<boolean | undefined> = async (emailOruserName) => {
+  if (emailOruserName !== "" && emailOruserName !== undefined) {
+    const response = await fetch(
+      "http://citypulse.runasp.net/api/User/findUserByEmail/" + emailOruserName
+    );
+    const data = await response.json();
+    const existingEmail: boolean = JSON.parse(JSON.stringify(data));
+    return existingEmail;
+  }
 };
-export const setCredentialsExistInSystem: (
-  email: string | undefined
-) => Promise<object> = async (email) => {
-  const response = await fetch(backendURL + email);
+export const checkCredentialsExistInSystem: (
+  emailOruserName: string | undefined,
+  password: string | undefined
+) => Promise<checkCredentialsExistInSystemType> = async (
+  emailOruserName,
+  password
+) => {
+  const response = await fetch(
+    "http://citypulse.runasp.net/api/User/login/userName=?" +
+      emailOruserName +
+      "&" +
+      "password=?" +
+      password
+  );
   const data = await response.json();
-  const dataWithToken: object = JSON.parse(JSON.stringify(data));
-  localStorage.setItem("userToken", JSON.stringify(dataWithToken));
-  return dataWithToken;
+  const dataWithToken: userWithToken = JSON.parse(JSON.stringify(data));
+  if (dataWithToken !== null) {
+    return { checked: true, data: dataWithToken };
+  }
+  return { checked: true, data: null };
 };
+// export const setCredentialsExistInSystem: (
+//   email: string | undefined
+// ) => Promise<object> = async (email) => {
+//   const response = await fetch(backendURL + email);
+//   const data = await response.json();
+//   const dataWithToken: object = JSON.parse(JSON.stringify(data));
+//   localStorage.setItem("userToken", JSON.stringify(dataWithToken));
+//   return dataWithToken;
+// };
 export const changePasswordUsingUserNameAndPassword: (
   userName: string,
   password: string
@@ -47,8 +83,12 @@ export const HandelLoginSubmitButton = async (
 ) => {
   if (emailOrusernameValue !== "" && passwordValue !== "") {
     // Await the result of the function call
-    if (await checkEmailExistInSystem()) {
-      if (await checkCredentialsExistInSystem()) {
+    if (await checkEmailExistInSystem(emailOrusernameValue)) {
+      const checkCredentials = await checkCredentialsExistInSystem(
+        emailOrusernameValue,
+        passwordValue
+      );
+      if (checkCredentials.checked === true) {
         dispatch({
           type: actionTypes.CHECKED_PASSWORD,
           payload: { email: emailOrusernameValue, password: passwordValue },

@@ -1,4 +1,4 @@
-interface register {
+export interface register {
   NameU: string;
   UserName: string;
   Email: string;
@@ -6,5 +6,5 @@ interface register {
   ConfirmPassword: string;
   PhoneNumber: string;
   Address: string;
-  ProfileImage: File;
+  ProfileImage: File | null;
 }
