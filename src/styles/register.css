@@ -1,29 +1,19 @@
 .container {
-    @apply my-20 mx-auto
+    @apply my-20 mx-auto 
 }
 
-.regform {
-    @apply flex-grow
-}
+
 
 .frm {
-    @apply border shadow-lg p-5 w-[95%] mx-auto items-center translate-y-2
-}
-
-.img {
-    @apply w-[40%] h-[500px]
-}
-
-.img img {
-    @apply h-full
+    @apply border rounded-md shadow-lg p-5 w-[95%] mx-auto items-center translate-y-2
 }
 
 .grouping {
-    @apply leading-[20px] mb-4 flex justify-between
+    @apply leading-[20px] mb-4 
 }
 
 .each_in_grouping {
-    @apply w-[45%]
+    @apply w-[95%]
 }
 
 .each_in_grouping label {
@@ -31,24 +21,16 @@
 }
 
 .each_in_grouping input {
-    @apply border-blue-400 border rounded-lg py-3 w-full focus:shadow-md focus:shadow-blue-400 focus:border-red-600
+    @apply bg-slate-100 border-transparent border rounded-lg py-3 w-full focus:shadow-md focus:shadow-blue-400 focus:border-red-600
 }
 
-.each_in_grouping select {
-    @apply border-blue-400 border py-3 w-full rounded-lg font-sans text-lg font-bold
-}
 
-.each_in_grouping select option {
-    @apply font-sans text-sm font-bold
-}
 
 .lepinp {
     @apply leading-[10px] mb-4
 }
 
-.lepinp input {
-    @apply border-blue-400 border rounded-lg py-3 w-[50%] focus:shadow-md focus:shadow-blue-400 focus:border-red-600
-}
+
 
 .lepinp label {
     @apply mb-2 w-full block font-bold font-serif text-lg
