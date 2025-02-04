@@ -125,7 +125,7 @@ function Login() {
               </label>
               <input
                 id="username"
-                type="email"
+                type="text"
                 className="bg-white
                             w-full p-2.5
                              border border-gray-300
@@ -138,7 +138,7 @@ function Login() {
                               dark:focus:ring-blue-400 dark:focus:border-blue-400
                               placeholder:text-md placeholder:text-gray-500 placeholder:font-sans placeholder:font-normal md:placeholder:text-lg
                              "
-                placeholder="Usually your email address or username"
+                placeholder="Usually your username"
                 ref={emailInputRef}
                 autoComplete="false"
               />

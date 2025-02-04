@@ -35,15 +35,15 @@ export const checkCredentialsExistInSystem: (
   emailOruserName,
   password
 ) => {
-  const response = await fetch(
-    "http://citypulse.runasp.net/api/User/login/userName=?" +
-      emailOruserName +
-      "&" +
-      "password=?" +
-      password
-  );
+  const response = await fetch("http://citypulse.runasp.net/api/User/login", {
+    method: "POST",
+    body: JSON.stringify({
+      userName: emailOruserName,
+      password: password,
+    }),
+  });
   const data = await response.json();
-  const dataWithToken: userWithToken = JSON.parse(JSON.stringify(data));
+  const dataWithToken: userWithToken = data;
   if (dataWithToken !== null) {
     return { checked: true, data: dataWithToken };
   }
@@ -83,25 +83,19 @@ export const HandelLoginSubmitButton = async (
 ) => {
   if (emailOrusernameValue !== "" && passwordValue !== "") {
     // Await the result of the function call
-    if (await checkEmailExistInSystem(emailOrusernameValue)) {
-      const checkCredentials = await checkCredentialsExistInSystem(
-        emailOrusernameValue,
-        passwordValue
-      );
-      if (checkCredentials.checked === true) {
-        dispatch({
-          type: actionTypes.CHECKED_PASSWORD,
-          payload: { email: emailOrusernameValue, password: passwordValue },
-        });
-      } else {
-        dispatch({
-          type: actionTypes.ERROR_CHECK_PASSWORD,
-          payload: { email: "", password: "" },
-        });
-      }
+
+    const checkCredentials = await checkCredentialsExistInSystem(
+      emailOrusernameValue,
+      passwordValue
+    );
+    if (checkCredentials.checked === true) {
+      dispatch({
+        type: actionTypes.CHECKED_PASSWORD,
+        payload: { email: emailOrusernameValue, password: passwordValue },
+      });
     } else {
       dispatch({
-        type: actionTypes.ERROR_CHECK_EMAIL,
+        type: actionTypes.ERROR_CHECK_PASSWORD,
         payload: { email: "", password: "" },
       });
     }
