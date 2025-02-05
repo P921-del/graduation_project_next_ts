@@ -6,5 +6,9 @@ export interface register {
   ConfirmPassword: string;
   PhoneNumber: string;
   Address: string;
-  ProfileImage: File | null;
+  ProfileImage: File;
+}
+export interface login {
+  userName: string | undefined;
+  password: string | undefined;
 }

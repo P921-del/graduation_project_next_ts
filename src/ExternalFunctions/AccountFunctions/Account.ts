@@ -1,20 +1,10 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
 import { backendURL } from "../../lib/Slices/auth/authRules";
-export interface userWithToken {
-  NameU: string;
-  UserName: string;
-  Email: string;
-  Password: string;
-  ConfirmPassword: string;
-  PhoneNumber: string;
-  Address: string;
-  ProfileImage: File | null;
-  userToken: string;
-}
+import { login } from "@/utils/types";
 export type checkCredentialsExistInSystemType = {
   checked: boolean;
-  data: userWithToken | null;
+  Token: string | null;
 };
 const checkEmailExistInSystem: (
   emailOruserName: string | undefined
@@ -35,19 +25,28 @@ export const checkCredentialsExistInSystem: (
   emailOruserName,
   password
 ) => {
+  debugger;
+  const user: login = {
+    userName: emailOruserName,
+    password: password,
+  };
   const response = await fetch("http://citypulse.runasp.net/api/User/login", {
     method: "POST",
-    body: JSON.stringify({
-      userName: emailOruserName,
-      password: password,
-    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
   });
-  const data = await response.json();
-  const dataWithToken: userWithToken = data;
-  if (dataWithToken !== null) {
-    return { checked: true, data: dataWithToken };
+  if (response.ok) {
+    const data = await response.json();
+    const Token: string = data.authService.token;
+    if (Token !== null) {
+      return { checked: true, Token: Token };
+    }
+    return { checked: true, Token: null };
+  } else {
+    return { checked: false, Token: null };
   }
-  return { checked: true, data: null };
 };
 // export const setCredentialsExistInSystem: (
 //   email: string | undefined

@@ -98,12 +98,7 @@ function Login() {
                 loginState.password.value
               );
               if ((await checkCredentials).checked) {
-                dispatchStore(
-                  setCredentials(
-                    ((await checkCredentials).data,
-                    (await checkCredentials).data?.userToken)
-                  )
-                );
+                dispatchStore(setCredentials((await checkCredentials).Token));
               }
               console.log("submmitted successfully");
             }

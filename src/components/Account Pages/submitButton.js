@@ -8,7 +8,7 @@ function SubmitButton({ submitButtonStatus, HandleSubmitButton }) {
     if (submitButtonStatus.loading && submitButtonStatus.isSubmitted) {
         return (
             <button
-                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[50%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
+                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[80%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
                 type="submit"
                 disabled
             >
@@ -20,7 +20,7 @@ function SubmitButton({ submitButtonStatus, HandleSubmitButton }) {
     else if (submitButtonStatus.loading === false && submitButtonStatus.isSubmitted) {
         return (
             <button
-                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[50%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
+                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[80%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
                 type="submit"
                 disabled
             >
@@ -32,7 +32,7 @@ function SubmitButton({ submitButtonStatus, HandleSubmitButton }) {
     else {
         return (
             <button
-                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[50%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
+                className="translate-x-1/2 py-3 px-4 bg-blue-700 w-[80%] mx-auto rounded-md hover:brightness-90 text-white font-bold"
                 type="submit"
                 onClick={() => {
                     HandleSubmitButton(true);
