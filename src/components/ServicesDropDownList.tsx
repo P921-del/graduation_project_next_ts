@@ -14,7 +14,7 @@ export const ServicesDropDownList = () => {
             </span>
           </li>
           <li
-            onClick={() => redirect("/services/hospital")}
+            onClick={() => redirect("/services/hospitals")}
             className="pl-2 py-2  border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-gray-600   text-gray-400 text-xl font-serif "
           >
             <span className=" hover:translate-x-4 duration-500 ease-in-out inline-block">

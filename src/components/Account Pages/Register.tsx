@@ -12,7 +12,7 @@ const RegisterComponent: React.FC = () => {
     try {
       //debugger;
       const response = await fetch(
-        "http://citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}",
+        `http://citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}`,
         {
           method: "GET",
         }
@@ -35,7 +35,7 @@ const RegisterComponent: React.FC = () => {
   const validateEmail = async (value: string) => {
     try {
       const response = await fetch(
-        "http://citypulse.runasp.net/api/User/IsEmailUnique?email=${value}",
+        `http://citypulse.runasp.net/api/User/IsEmailUnique?email=${value}`,
         {
           method: "GET",
         }
@@ -142,7 +142,7 @@ const RegisterComponent: React.FC = () => {
           formData.append("profileImage", file);
         }
         const response = await fetch(
-          "http://citypulse.runasp.net/api/User/register",
+          `http://citypulse.runasp.net/api/User/register`,
           {
             method: "POST",
             body: formData, // إرسال البيانات كـ FormData
