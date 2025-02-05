@@ -1,3 +1,4 @@
+import Hospitals from "@/components/Hospitals/Hospitals";
 import Restaurants from "@/components/Restaurants/Restaurants";
 import Schools from "@/components/Schools/Schools";
 import { Metadata } from "next";
@@ -15,15 +16,15 @@ enum ServiceType {
 }
 // Metadata function
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { serviceName } = params;
+  const { serviceName } = await params;
   return {
     title: `${serviceName}`,
   };
 }
 
 // Page Component
-export default function Service({ params }: Props) {
-  const { serviceName } = params;
+export default async function Service({ params }: Props) {
+  const { serviceName } = await  params;
   if (serviceName === ServiceType.Restaurants) {
     return (
       <div>
@@ -34,6 +35,13 @@ export default function Service({ params }: Props) {
     return (
       <div>
         <Schools />
+      </div>
+    );
+  }
+  else if (serviceName === ServiceType.Hospitals) {
+    return (
+      <div>
+        <Hospitals/>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { HiUser } from "react-icons/hi";
 import { AccountDropDownList } from "./AccountDropDownList";
 import { useState } from "react";
 import { ServicesDropDownList } from "./ServicesDropDownList";
@@ -44,7 +45,7 @@ export default function Navbar() {
               }}
               className="ml-20 hover:cursor-pointer text-cyan-900 text-2xl font-serif font-bold italic hover:text-cyan-400 duration-500 ease-in-out"
             >
-              Account <span>ar</span>
+             <HiUser className="h-10 w-10 text-blue-500" />
             </li>
             {clickAc && <AccountDropDownList />}
           </ul>
