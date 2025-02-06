@@ -31,7 +31,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {pathname === "/unauthorized" ? null : (
+          {pathname === "/unauthorized" || pathname === "/login" ? null : (
             <div>
               {" "}
               <Navbar />
@@ -39,7 +39,7 @@ export default function RootLayout({
           )}
 
           <div>{children}</div>
-          {pathname === "/unauthorized" ? null : (
+          {pathname === "/unauthorized" || pathname === "/login" ? null : (
             <div>
               <Footer />
             </div>

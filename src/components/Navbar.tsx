@@ -45,7 +45,7 @@ export default function Navbar() {
               }}
               className="ml-20 hover:cursor-pointer text-cyan-900 text-2xl font-serif font-bold italic hover:text-cyan-400 duration-500 ease-in-out"
             >
-             <HiUser className="h-10 w-10 text-blue-500" />
+              <HiUser className="h-10 w-10 text-blue-500" />
             </li>
             {clickAc && <AccountDropDownList />}
           </ul>

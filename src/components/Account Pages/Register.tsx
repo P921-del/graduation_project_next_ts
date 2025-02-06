@@ -54,18 +54,15 @@ const RegisterComponent: React.FC = () => {
       return false; // Default to not unique
     }
   };
-  const initialStateImageFile = {
-    showErrorMessageforAllowedFile: false,
-    errorMessageforAllowedFile: "",
-  };
-  const [allowedImageFile, setAllowedImageFile] = useState(
-    initialStateImageFile
-  );
-  const [file, setFile] = useState<File | null | undefined>(undefined);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+  const SUPPORTED_FORMATS = [".jpg", ".jpeg", ".png"];
+  const validateFile = (value: any) => {
+    if (value) {
+      const fileExtension = value.split(".").pop(); // Get the file extension
+      console.log(fileExtension);
+      if (SUPPORTED_FORMATS.includes(`.${fileExtension}`)) {
+        return true; // File type is valid
+      }
+      return false; // Invalid file type
     }
   };
   const registerForm = useRef<HTMLFormElement>(null);
@@ -91,6 +88,7 @@ const RegisterComponent: React.FC = () => {
       password: "",
       confirmPassword: "",
       address: "",
+      profileImage: null,
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Name is required"),
@@ -101,7 +99,7 @@ const RegisterComponent: React.FC = () => {
       email: Yup.string()
         .email("Invalid email")
         .required("Email is required")
-        .test("Email is already existes", validateEmail),
+        .test("Email is already exists", validateEmail),
       confirmEmail: Yup.string()
         .required("Confirm email is required")
         .oneOf([Yup.ref("email"), ""], "Emails must match"),
@@ -119,6 +117,13 @@ const RegisterComponent: React.FC = () => {
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), ""], "Passwords must match"),
       address: Yup.string().required("Address is required"),
+      profileImage: Yup.mixed()
+        .required("Profile image is required")
+        .test(
+          "file-type",
+          "File must be an image (jpg, jpeg, png)",
+          validateFile
+        ),
     }),
     onSubmit: async (values) => {
       setSubmitButtonStatus({
@@ -127,38 +132,81 @@ const RegisterComponent: React.FC = () => {
         isSubmitted: true,
       });
       try {
-        // إنشاء FormData وإضافة البيانات إليها
-        const formData = new FormData();
-        formData.append("nameU", values.name);
-        formData.append("userName", values.userName);
-        formData.append("email", values.email);
-        formData.append("password", values.password);
-        formData.append("confirmPassword", values.confirmPassword);
-        formData.append("phoneNumber", values.phoneNumber);
-        formData.append("address", values.address);
+        debugger;
+        if (values.profileImage !== null) {
+          // إنشاء FormData وإضافة البيانات إليها
+          const formData = new FormData(
+            registerForm.current !== null ? registerForm.current : undefined
+          );
+          formData.append("nameU", values.name);
+          formData.append("userName", values.userName);
+          formData.append("email", values.email);
+          formData.append("password", values.password);
+          formData.append("confirmPassword", values.confirmPassword);
+          formData.append("phoneNumber", values.phoneNumber);
+          formData.append("address", values.address);
+          formData.append("profileImage", values.profileImage);
+          const response = await fetch(
+            `http://citypulse.runasp.net/api/User/register`,
+            {
+              method: "POST",
+              body: formData, // إرسال البيانات كـ FormData
+            }
+          );
 
-        // إضافة الصورة إذا كانت موجودة
-        if (file) {
-          formData.append("profileImage", file);
-        }
-        const response = await fetch(
-          `http://citypulse.runasp.net/api/User/register`,
-          {
-            method: "POST",
-            body: formData, // إرسال البيانات كـ FormData
+          if (!response.ok) {
+            setSubmitButtonStatus({
+              loading: false,
+              submitButtonText: "Failed to register", //
+              isSubmitted: true,
+            });
+            console.log(formData);
+            setTimeout(() => {
+              setSubmitButtonStatus({
+                loading: false,
+                submitButtonText: "Register",
+                isSubmitted: false,
+              });
+              formik.resetForm();
+            }, 2000);
+            throw new Error("Failed to register");
           }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to register");
+          setSubmitButtonStatus({
+            loading: false,
+            submitButtonText: "submited successfully", //
+            isSubmitted: true,
+          });
+          console.log(formData);
+          setTimeout(() => {
+            setSubmitButtonStatus({
+              loading: false,
+              submitButtonText: "Register",
+              isSubmitted: false,
+            });
+            formik.resetForm();
+            router.push("/login");
+          }, 2000);
+          console.log("Registration successful:", response.status);
+          alert("Registration successful!");
+          const result = await response.json();
+          console.log(result);
         }
-        const result = await response.json();
-        console.log("Registration successful:", result);
-        alert("Registration successful!");
-        router.push("/login");
       } catch (error) {
-        console.error("Error:", error);
         alert("Registration failed");
+        console.log(`Fetch erro:`, error);
+        setSubmitButtonStatus({
+          loading: false,
+          submitButtonText: "Failed to register", //
+          isSubmitted: true,
+        });
+        setTimeout(() => {
+          setSubmitButtonStatus({
+            loading: false,
+            submitButtonText: "Register",
+            isSubmitted: false,
+          });
+          formik.resetForm();
+        }, 2000);
       } finally {
         setSubmitButtonStatus({
           loading: false,
@@ -329,16 +377,15 @@ const RegisterComponent: React.FC = () => {
             <div className="each_in_grouping col-span-2 mb-10">
               <label htmlFor="image">Upload Your Image here (optional):</label>
               <input
-                onChange={handleFileChange}
+                value={formik.values.profileImage || ""}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 type="file"
-                id="image"
-                name="image"
+                id="profileImage"
+                name="profileImage"
               />
-              {allowedImageFile.showErrorMessageforAllowedFile &&
-              allowedImageFile.errorMessageforAllowedFile ? (
-                <span className="errors">
-                  {allowedImageFile.errorMessageforAllowedFile}
-                </span>
+              {formik.touched.profileImage && formik.errors.profileImage ? (
+                <span className="errors">{formik.errors.profileImage}</span>
               ) : null}
             </div>
             <SubmitButton

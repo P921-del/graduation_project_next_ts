@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 interface Mempers {
@@ -12,7 +11,7 @@ interface Mempers {
   imageUrl: string;
 }
 
-export default function AboutClient() {
+const AboutClient = () => {
   const [mempers, setMempers] = useState<Mempers[]>();
 
   useEffect(() => {
@@ -26,8 +25,7 @@ export default function AboutClient() {
 
   return (
     <div className="main">
-      <h1>About Us</h1>
-      <div className="content w-[90%] mx-auto">
+      <div className="content w-[90%] mx-auto mt-8">
         <div className="presentation font"></div>
         <div className="teamMempers text-center">
           <div className="memper w-1/2 mx-auto h-full">
@@ -62,4 +60,5 @@ export default function AboutClient() {
       </div>
     </div>
   );
-}
+};
+export default AboutClient;
