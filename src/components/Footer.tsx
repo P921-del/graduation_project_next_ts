@@ -5,8 +5,8 @@ import { FaFacebook ,FaInstagram, FaWhatsapp, FaLinkedin, FaTwitter } from 'reac
 import { ChevronDoubleRightIcon} from '@heroicons/react/solid';
 export default function Footer(){
     const Services =[
-        {name:"Hospital", link:"/services/hospital"},
-        {name:"School", link:"/services/school"},
+        {name:"Hospital", link:"/services/hospitals"},
+        {name:"School", link:"/services/schools"},
         {name:"Clincs", link:"/services/clincs"},
         {name:"Restaurant", link:"/services/restaurant"},
         
@@ -23,8 +23,8 @@ export default function Footer(){
         let index=0;
         const interval=setInterval(()=>{
             index =index % (tex.length )
-            const asiu:HTMLElement=document.getElementById('asiu');
-            asiu.textContent=tex.substring(0,index).concat(" "+tex[tex.length -1])
+            const asiu:HTMLElement| null =document.getElementById('asiu');
+            asiu!.textContent=tex.substring(0,index).concat(" "+tex[tex.length -1])
             index++;
             
         },250)
