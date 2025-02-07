@@ -19,7 +19,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../lib/Slices/auth/authSlice";
+import { actionTypes } from "@/Reducers/loginReducer/loginActionTypes";
 import "../../styles/login.css";
+
 const FadeIn = styled.div`
   animation: 1s ${keyframes`${fadeIn}`} ease-in-out;
 `;
@@ -64,7 +66,39 @@ function Login() {
       setErrorMessage(loginState.errors?.value);
     }
   }, [ErrorMessageShowed, loginState.errors]);
-
+  useEffect(() => {
+    const fetch = async () => {
+      if (
+        !loginState.loggedIn.value &&
+        loginState.errors.isExist &&
+        loginState.number_of_failed_trials.value < 5
+      ) {
+        setErrorMessageShowed(true);
+        setStageAnimations(stage.first);
+        setTimeout(() => {
+          setStageAnimations(stage.second);
+          setTimeout(() => {
+            setErrorMessageShowed(false);
+          }, 500);
+        }, 2000);
+      } else {
+        const checkCredentials = checkCredentialsExistInSystem(
+          loginState.email.value,
+          loginState.password.value
+        );
+        if ((await checkCredentials).checked) {
+          dispatchStore(setCredentials((await checkCredentials).Token));
+          dispatch({
+            type: actionTypes.RESET_LOGIN_FORM,
+            payload: { email: "", password: "" },
+          });
+          console.log("submmitted successfully");
+          router.push("/");
+        }
+      }
+    };
+    fetch();
+  }, [loginState]);
   return (
     <div
       className={
@@ -104,34 +138,14 @@ function Login() {
             ref={loginForm}
             className="h-[83%]"
             onSubmit={async (event) => {
+              debugger;
               event.preventDefault(); //Prevent the default from submission behavior
+              // Await the result of the function call
               await HandelLoginSubmitButton(
                 emailInputRef.current?.value,
                 passwordInputRef.current?.value,
                 dispatch
               );
-              if (
-                !loginState.loggedIn.value &&
-                loginState.number_of_failed_trials.value < 5
-              ) {
-                setErrorMessageShowed(true);
-                setStageAnimations(stage.first);
-                setTimeout(() => {
-                  setStageAnimations(stage.second);
-                  setTimeout(() => {
-                    setErrorMessageShowed(false);
-                  }, 500);
-                }, 2000);
-              } else {
-                const checkCredentials = checkCredentialsExistInSystem(
-                  loginState.email.value,
-                  loginState.password.value
-                );
-                if ((await checkCredentials).checked) {
-                  dispatchStore(setCredentials((await checkCredentials).Token));
-                }
-                console.log("submmitted successfully");
-              }
             }}
           >
             <div
@@ -258,8 +272,8 @@ function Login() {
               <button
                 className={
                   disableSubmmitButton
-                    ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
-                    : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-purple-700 hover:bg-purple-800"
+                    ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white text-2xl font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
+                    : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white text-2xl font-sans font-bold flex items-center justify-center bg-purple-700 hover:bg-purple-800"
                 }
                 type="submit"
                 disabled={disableSubmmitButton}
@@ -318,8 +332,10 @@ function Login() {
                 );
                 if ((await checkCredentials).checked) {
                   dispatchStore(setCredentials((await checkCredentials).Token));
+                  setErrorMessageShowed(false);
+                  console.log("submmitted successfully");
+                  router.push("/");
                 }
-                console.log("submmitted successfully");
               }
             }}
           >
@@ -447,13 +463,13 @@ function Login() {
               <button
                 className={
                   disableSubmmitButton
-                    ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
-                    : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white sm:text-[17px] md:text-2xl lg:text-[16px] xl:text-lg font-sans font-bold flex items-center justify-center bg-purple-700 hover:bg-purple-800"
+                    ? "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white text-2xl font-sans font-bold flex items-center justify-center bg-red-800 hover:bg-red-900"
+                    : "h-[90%] my-auto md:my-0 mt-1 ml-auto mr-1 md:mr-2 w-[40%] md:w-[37%] xl:w-[41%] rounded-md text-white text-2xl font-sans font-bold flex items-center justify-center bg-purple-700 hover:bg-purple-800"
                 }
                 type="submit"
                 disabled={disableSubmmitButton}
               >
-                <IoLogInOutline className="text-2xl md:text-xl xl:text-2xl inline-block" />
+                <IoLogInOutline className="inline-block" />
                 <span className="mb-1">Login</span>
               </button>
             </div>

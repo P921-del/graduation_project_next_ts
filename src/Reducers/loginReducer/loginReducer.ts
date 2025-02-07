@@ -161,6 +161,10 @@ const loginReducer: (
         },
       };
     }
+    case actionTypes.RESET_LOGIN_FORM: {
+      localStorage.setItem("number_of_failed_trials", JSON.stringify(0));
+      return initialState;
+    }
     default:
       return state;
   }
