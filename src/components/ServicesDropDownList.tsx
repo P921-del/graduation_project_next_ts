@@ -6,11 +6,7 @@ export const ServicesDropDownList = () => {
         <ul className="p-0.5 ">
           <li
             onClick={() => redirect("/services/schools")}
-<<<<<<< HEAD
             className="pl-2 py-2 hover:cursor-pointer border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-gray-600   text-gray-400 text-xl font-serif "
-=======
-            className="pl-2 py-2  hover:cursor-pointer border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-gray-600   text-gray-400 text-xl font-serif "
->>>>>>> dcba55a5f36d25f753febd4be12e21130675401d
           >
             <span className=" hover:translate-x-4 duration-500 ease-in-out inline-block">
               Schools
@@ -18,11 +14,7 @@ export const ServicesDropDownList = () => {
           </li>
           <li
             onClick={() => redirect("/services/hospitals")}
-<<<<<<< HEAD
             className="pl-2 py-2 hover:cursor-pointer border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-gray-600   text-gray-400 text-xl font-serif "
-=======
-            className="pl-2 py-2  hover:cursor-pointer border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-gray-600   text-gray-400 text-xl font-serif "
->>>>>>> dcba55a5f36d25f753febd4be12e21130675401d
           >
             <span className=" hover:translate-x-4 duration-500 ease-in-out inline-block">
               Hospitals

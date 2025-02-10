@@ -11,14 +11,20 @@ export default function Navbar() {
   return (
     <div className="nav justify-between bg-gray-100 h-16 flex items-center shadow-md shadow-gray-300">
       <div className="logo  flex  items-center ml-4">
-        <div className="w-10 h-10 rounded-full bg-blue-500"></div>
+        <div className="w-10 h-10 rounded-full">
+          <img
+            className=" rounded-full"
+            src={"/assets/Images/logo/services-provider-logo.jpg"}
+            alt={"services-provider-logo"}
+          />
+        </div>
         <h3
           onClick={() => {
             redirect("/");
           }}
           className=" hover:cursor-pointer ml-2 text-2xl font-serif italic text-cyan-900"
         >
-          Assiu5damat
+          City Guide
         </h3>
       </div>
       <div className="linkes mr-32 ">

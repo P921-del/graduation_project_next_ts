@@ -25,30 +25,28 @@ export const checkCredentialsExistInSystem: (
   emailOruserName,
   password
 ) => {
-<<<<<<< HEAD
-=======
-  //debugger;
->>>>>>> dcba55a5f36d25f753febd4be12e21130675401d
   const user: login = {
     userName: emailOruserName,
     password: password,
   };
-  const response = await fetch("http://citypulse.runasp.net/api/User/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
-  if (response.ok) {
-    const data = await response.json();
-    const Token: string = data.authService.token;
-    if (Token !== null) {
-      return { checked: true, Token: Token };
+  if (emailOruserName !== undefined && password !== undefined) {
+    const response = await fetch("http://citypulse.runasp.net/api/User/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const Token: string = data.authService.token;
+      if (Token !== null) {
+        return { checked: true, Token: Token };
+      }
+      return { checked: true, Token: null };
+    } else {
+      return { checked: false, Token: null };
     }
-    return { checked: true, Token: null };
-  } else {
-    return { checked: false, Token: null };
   }
 };
 // export const setCredentialsExistInSystem: (
