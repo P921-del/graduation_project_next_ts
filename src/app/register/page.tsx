@@ -1,4 +1,3 @@
-import Registercomp from "@/components/Registercomp";
 import RegisterComponent from "@/components/Account Pages/Register";
 import { Metadata } from "next";
 export function generateMetadata(): Metadata {

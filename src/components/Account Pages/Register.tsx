@@ -134,7 +134,6 @@ const RegisterComponent: React.FC = () => {
         isSubmitted: true,
       });
       try {
-        debugger;
         if (values.profileImage !== null) {
           // إنشاء FormData وإضافة البيانات إليها
           const formData = new FormData(
@@ -445,7 +444,7 @@ const RegisterComponent: React.FC = () => {
                           flex items-center justify-center
                           "
                   onClick={() => {
-                    debugger;
+                  
                     setIsOpened(false);
                     formik.setTouched(formik.initialTouched);
                     setTimeout(() => {

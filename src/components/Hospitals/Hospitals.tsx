@@ -48,7 +48,7 @@ export default function Hospitals() {
   }, []);
   return (
     <>
-      <div className="main">
+      <div className="m">
         <MainHeaderForEachComponent
           mainHeader={mainHeaderForRestaurantComponent}
         />
@@ -56,7 +56,7 @@ export default function Hospitals() {
           The closest government hospitals to your location is in Assiut
         </h1>
         {hospitals.length > 0 ? (
-          <div className="container mx-auto">
+          <div className="container w-[95%] mx-auto">
             <div className="allHospitals grid grid-cols-2 my-20 gap-3 duration-700">
               {hospitals?.map((hospital: Hospitals) => (
                 <HospitalCard key={hospital.hospitalId} hospital={hospital} />

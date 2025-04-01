@@ -2,12 +2,14 @@
 import Link from "next/link";
 import { HiUser } from "react-icons/hi";
 import { AccountDropDownList } from "./AccountDropDownList";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ServicesDropDownList } from "./ServicesDropDownList";
 import { redirect } from "next/navigation";
+import { ManageRestoContext } from "@/app/Context/ManageRestoContext";
 export default function Navbar() {
   const [clickAc, setClickedAc] = useState<boolean>(false);
   const [clickSer, setClickedSer] = useState<boolean>(false);
+  const{counter}=useContext(ManageRestoContext);
   return (
     <div className="nav justify-between bg-gray-100 h-16 flex items-center shadow-md shadow-gray-300">
       <div className="logo  flex  items-center ml-4">
@@ -54,6 +56,7 @@ export default function Navbar() {
               <HiUser className="h-10 w-10 text-blue-500" />
             </li>
             {clickAc && <AccountDropDownList />}
+          
           </ul>
         </div>
       </div>
