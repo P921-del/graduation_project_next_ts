@@ -45,7 +45,7 @@ export default function Menu({restoId}:any){
                     <Card key={index} className="bg-white border border-blue-200 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                         <div className=" menuItem flex flex-col hover:brightness-90 duration-300">
                             <div className="img h-48 overflow-hidden rounded-t-lg">
-                                <img className="h-full w-full object-cover" src={`/${item.mealImage}`} alt="Notfound"/>
+                                <img className="h-full w-full object-cover" src={`http://citypulse.runasp.net${item.mealImage}`} alt="Notfound"/>
                             </div>
                             <div className="p-4">
                                 <h3 className="text-center h-[12%] text-blue-700 text-2xl font-mono font-bold">{item.mealName}</h3>

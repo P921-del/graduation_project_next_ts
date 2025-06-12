@@ -40,7 +40,7 @@ function Restaurant(props: Props) {
     <div className="pt-1 pb-4 hover:brightness-75 duration-500 overflow-hidden">
         <img
         className=" h-[300px] hover:scale-110 duration-700 ease-in-out w-full  "
-          src={`/${props.restaurantImage}`}
+          src={`http://citypulse.runasp.net${props.restaurantImage}`}
           alt={props.restaurantName}
         />
       <p className="text-violet-950 flex text-xl  mt-2"><span><FaLocationDot/></span>{props.city}</p>

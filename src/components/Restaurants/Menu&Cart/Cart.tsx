@@ -55,7 +55,7 @@ useEffect(()=>{
                 >
                     {/* صورة الوجبة */}
                     <img 
-                        src={`/assets/restaurants/${item.mealImage}`} 
+                        src={`http://citypulse.runasp.net${item.mealImage}`} 
                         alt={item.mealName} 
                         className="rounded-full w-[100px] h-[100px] object-cover border-2 border-gray-300"
                     />
@@ -80,12 +80,12 @@ useEffect(()=>{
                         >
                             Remove
                         </button>
-                        <button 
+                        {/* <button 
                             className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition duration-200"
                             onClick={() => clearCart()}
                         >
                             Clear Cart
-                        </button>
+                        </button> */}
                     </div>
                 </div>
                 ))}
