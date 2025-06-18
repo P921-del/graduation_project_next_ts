@@ -2,11 +2,14 @@
 import Link from "next/link";
 import { HiUser } from "react-icons/hi";
 import { AccountDropDownList } from "./AccountDropDownList";
-import { useEffect, useState } from "react";
+
+import { useContext, useState,useEffect } from "react";
 import { ServicesDropDownList } from "./ServicesDropDownList";
 import { redirect } from "next/navigation";
+import { ManageRestoContext } from "@/app/Context/ManageRestoContext";
 import { store } from "../lib/store";
 import { backendURL } from "@/lib/Slices/auth/authRules";
+
 export default function Navbar() {
   const [profileImage, setProfileImage] = useState<string | undefined>("");
   useEffect(() => {
@@ -41,6 +44,8 @@ export default function Navbar() {
   };
   const [clickAc, setClickedAc] = useState<boolean>(false);
   const [clickSer, setClickedSer] = useState<boolean>(false);
+  const{counter}=useContext(ManageRestoContext);
+
   const sendFromChildTwo: (click: boolean) => void = (click) => {
     if (click == true) setClickedAc(true);
     else setClickedAc(false);
@@ -116,6 +121,9 @@ export default function Navbar() {
                 />
               )}
             </li>
+            {clickAc && <AccountDropDownList />}
+          
+r
           </ul>
         </div>
       </div>

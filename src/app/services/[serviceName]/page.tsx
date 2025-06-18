@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Page Component
 export default async function Service({ params }: Props) {
+
   const { serviceName } = await params;
   if (serviceName === ServiceType.Restaurants) {
     return <Restaurants />;
@@ -34,6 +35,7 @@ export default async function Service({ params }: Props) {
   } else if (serviceName === ServiceType.Hospitals) {
     return <Hospitals />;
   } else if (serviceName === ServiceType.Clinics) {
+
     return (
       <div>
         <Clinics />

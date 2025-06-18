@@ -93,7 +93,6 @@ const RegisterComponent: React.FC = () => {
       phoneNumber: "",
       userName: "",
       email: "",
-      confirmEmail: "",
       password: "",
       confirmPassword: "",
       address: "",
@@ -101,12 +100,15 @@ const RegisterComponent: React.FC = () => {
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Name is required"),
       phoneNumber: Yup.string().required("Phone number is required"),
-      userName: Yup.string().required("Username is required"),
-      email: Yup.string().email("Invalid email").required("Email is required"),
-      // .test("Email is already exists", validateEmail),
-      confirmEmail: Yup.string()
-        .required("Confirm email is required")
-        .oneOf([Yup.ref("email"), ""], "Emails must match"),
+
+      userName: Yup.string()
+        .required("Username is required")
+        .test("Username is already exists", validateUsername),
+      email: Yup.string()
+        .email("Invalid email")
+        .required("Email is required")
+        .test("Email is already exists", validateEmail),
+
       password: Yup.string()
         .required("Password is required")
         .min(8, "Password must be at least 8 characters long")
@@ -129,7 +131,7 @@ const RegisterComponent: React.FC = () => {
         isSubmitted: true,
       });
       try {
-        debugger;
+
         // إنشاء FormData وإضافة البيانات إليها
         // const formData = new FormData(
         //   registerForm.current !== null ? registerForm.current : undefined
@@ -167,6 +169,7 @@ const RegisterComponent: React.FC = () => {
             if (data.errors.PhoneNumber.length > 0) {
               console.log(data.errors);
               formik.setFieldError("phoneNumber", data.errors.PhoneNumber[0]);
+
             }
 
             // SyntaxError: Unexpected token 'u', "userName i"... is not valid JSON
@@ -259,7 +262,6 @@ const RegisterComponent: React.FC = () => {
         userName: "",
         email: "",
         password: "",
-        confirmEmail: "",
         address: "",
       });
     }
@@ -374,32 +376,10 @@ const RegisterComponent: React.FC = () => {
                 ) : null}
               </div>
               <div className="each_in_grouping">
-                <label
-                  id="confirmEmailLabel"
-                  className="w-full"
-                  htmlFor="ConfirmEmailAddress"
-                >
-                  Confirm Email Address
-                  <span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.confirmEmail}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="email"
-                  id="ConfirmEmailAddress"
-                  name="confirmEmail"
-                  onCopy={(event) => event.preventDefault()}
-                  onPaste={(event) => event.preventDefault()}
-                />
-                {formik.touched.confirmEmail && formik.errors.confirmEmail ? (
-                  <span className="errors">{formik.errors.confirmEmail}</span>
-                ) : null}
-              </div>
-            </div>
 
             <div className="w-[95%] flex flex-row gap-x-4 mb-10">
               <div className="each_in_grouping">
+
                 <label htmlFor="pass">
                   Password<span className="text-2xl text-red-500">*</span>:
                 </label>
@@ -442,14 +422,64 @@ const RegisterComponent: React.FC = () => {
               </div>
             </div>
 
-            <SubmitButton
-              submitButtonStatus={submitButtonStatus}
-              HandleSubmitButton={HandleSubmitButton}
-            />
-          </div>
-        </form>
-        <div
-          className="px-2 mt-4
+
+              <div className="each_in_grouping">
+                <label htmlFor="user">
+                  UserName<span className="text-2xl text-red-500">*</span>:
+                </label>
+                <input
+                  value={formik.values.userName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  type="text"
+                  id="user"
+                  name="userName"
+                />
+                {formik.touched.userName && formik.errors.userName ? (
+                  <span className="errors">{formik.errors.userName}</span>
+                ) : null}
+              </div>
+
+              <div className="each_in_grouping">
+                <label htmlFor="address">
+                  Addres<span className="text-2xl text-red-500">*</span>:
+                </label>
+                <input
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  type="text"
+                  id="address"
+                  name="address"
+                />
+                {formik.touched.address && formik.errors.address ? (
+                  <span className="errors">{formik.errors.address}</span>
+                ) : null}
+              </div>
+              <div className="each_in_grouping col-span-2 mb-10">
+                <label htmlFor="image">
+                  Upload Your Image here
+                  <span className="text-2xl text-red-500">*</span>:
+                </label>
+                <input
+                  value={formik.values.profileImage || ""}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  type="file"
+                  id="profileImage"
+                  name="profileImage"
+                />
+                {formik.touched.profileImage && formik.errors.profileImage ? (
+                  <span className="errors">{formik.errors.profileImage}</span>
+                ) : null}
+              </div>
+              <SubmitButton
+                submitButtonStatus={submitButtonStatus}
+                HandleSubmitButton={HandleSubmitButton}
+              />
+              <div
+                className="px-2 mt-4
+
                     flex items-center justify-center gap-2  col-span-2
                     bg-transparent h-[15%] md:h-[20%] mb-2
                     "
@@ -467,18 +497,22 @@ const RegisterComponent: React.FC = () => {
                         hover:underline hover:text-blue-300
                           flex items-center justify-center
                           "
-              onClick={() => {
-                debugger;
-                setIsOpened(false);
-                formik.setTouched(formik.initialTouched);
-                setTimeout(() => {
-                  router.push("/login");
-                }, 500);
-              }}
-            >
-              Log in!
-            </button>
-          </div>
+
+                  onClick={() => {
+                  
+                    setIsOpened(false);
+                    formik.setTouched(formik.initialTouched);
+                    setTimeout(() => {
+                      router.push("/login");
+                    }, 2000);
+                  }}
+                >
+                  Log in!
+                </button>
+              </div>
+            </div>
+          </form>
+
         </div>
       </div>
     </div>

@@ -1,13 +1,17 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
 import { backendURL } from "../../lib/Slices/auth/authRules";
+
 import { login, userObject } from "@/utils/types";
 import { ExecException } from "child_process";
+
 export type checkCredentialsExistInSystemType = {
   checked: boolean;
   Token: string | null;
   user: userObject | null;
 };
+
+// التحقق من وجود البريد الإلكتروني في النظام
 const checkEmailExistInSystem: (
   emailOruserName: string | undefined
 ) => Promise<boolean | undefined> = async (emailOruserName) => {
@@ -19,7 +23,10 @@ const checkEmailExistInSystem: (
     const existingEmail: boolean = JSON.parse(JSON.stringify(data));
     return existingEmail;
   }
+  return false;
 };
+
+// التحقق من صحة بيانات تسجيل الدخول وإرجاع التوكن إذا كان صحيحًا
 export const checkCredentialsExistInSystem: (
   emailOruserName: string | undefined,
   password: string | undefined
@@ -27,52 +34,41 @@ export const checkCredentialsExistInSystem: (
   emailOruserName,
   password
 ) => {
-  try {
-    const user: login = {
-      username: emailOruserName,
-      password: password,
-    };
-    if (emailOruserName !== undefined && password !== undefined) {
-      debugger;
-      const response = await fetch(
-        "http://citypulse.runasp.net/api/User/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-        }
-      );
-      if (response.ok) {
-        debugger;
-        const data = await response.json();
-        const Token: string = data.token;
-        const user: userObject = {
-          id: data.id,
-          roles: data.roles,
-        };
-        if (Token !== null) {
-          return { checked: true, Token: Token, user };
-        }
-        return { checked: true, Token: null, user: null };
-      } else {
-        return { checked: false, Token: null, user: null };
-      }
+  const user: login = {
+    userName: emailOruserName,
+    password: password,
+  };
+
+  if (emailOruserName !== undefined && password !== undefined) {
+    const response = await fetch("http://citypulse.runasp.net/api/User/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("data :", data);
+      
+      localStorage.setItem("userId",JSON.stringify(data.id))
+      localStorage.setItem("Token",data.token)
+        console.log("token :", JSON.stringify(data.token));
+      // استخراج التوكن والتحقق من وجوده
+      const Token: string | null = data?.authService?.token || null;
+      return { checked: true, Token };
+
     }
   } catch (e) {
     console.log(e);
   }
+  
+  // تأكد من إرجاع قيمة افتراضية في حالة فشل الطلب
+  return { checked: false, Token: null };
 };
-// export const setCredentialsExistInSystem: (
-//   email: string | undefined
-// ) => Promise<object> = async (email) => {
-//   const response = await fetch(backendURL + email);
-//   const data = await response.json();
-//   const dataWithToken: object = JSON.parse(JSON.stringify(data));
-//   localStorage.setItem("userToken", JSON.stringify(dataWithToken));
-//   return dataWithToken;
-// };
+
+// تغيير كلمة المرور باستخدام اسم المستخدم وكلمة المرور القديمة
 export const changePasswordUsingUserNameAndPassword: (
   userName: string,
   password: string
@@ -82,6 +78,8 @@ export const changePasswordUsingUserNameAndPassword: (
   const changePassword: boolean = JSON.parse(JSON.stringify(data));
   return changePassword;
 };
+
+// تغيير كلمة المرور باستخدام البريد الإلكتروني وكلمة المرور القديمة
 export const changePasswordUsingEmailAndPassword: (
   userName: string,
   password: string
@@ -91,18 +89,20 @@ export const changePasswordUsingEmailAndPassword: (
   const changePassword: boolean = JSON.parse(JSON.stringify(data));
   return changePassword;
 };
+
+// تنفيذ عملية تسجيل الدخول ومعالجة الاستجابة
 export const HandelLoginSubmitButton = async (
   emailOrusernameValue: string | undefined,
   passwordValue: string | undefined,
   dispatch: React.Dispatch<ActionType>
 ) => {
   if (emailOrusernameValue !== "" && passwordValue !== "") {
-    // Await the result of the function call
-
+    // انتظار نتيجة التحقق من بيانات المستخدم
     const checkCredentials = await checkCredentialsExistInSystem(
       emailOrusernameValue,
       passwordValue
     );
+
     if (checkCredentials.checked === true) {
       dispatch({
         type: actionTypes.CHECKED_PASSWORD,

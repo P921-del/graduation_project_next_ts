@@ -149,7 +149,7 @@ function Login() {
             ref={loginForm}
             className="h-1/2"
             onSubmit={async (event) => {
-              debugger;
+            
               event.preventDefault(); //Prevent the default from submission behavior
               // Await the result of the function call
               await HandelLoginSubmitButton(
