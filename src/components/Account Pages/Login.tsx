@@ -2,7 +2,6 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { fadeIn, fadeOut } from "react-animations";
-import { IoLogInOutline } from "react-icons/io5";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
@@ -82,16 +81,27 @@ function Login() {
           }, 500);
         }, 2000);
       } else {
+        debugger;
         const checkCredentials = checkCredentialsExistInSystem(
           loginState.email.value,
           loginState.password.value
         );
         if ((await checkCredentials).checked) {
-          dispatchStore(setCredentials((await checkCredentials).Token));
+          const payload = {
+            userToken: (await checkCredentials).Token,
+            user: (await checkCredentials).user,
+          };
+          dispatchStore(setCredentials(payload));
           dispatch({
             type: actionTypes.RESET_LOGIN_FORM,
             payload: { email: "", password: "" },
           });
+          if (
+            (await checkCredentials).Token !== null &&
+            (await checkCredentials).user?.roles === "ClinicStaff"
+          ) {
+            window.location.assign("/admin-doctor");
+          }
           console.log("submmitted successfully");
           router.push("/");
         }
@@ -113,7 +123,7 @@ function Login() {
           className="w-80
              h-[50%] z-30
               my-auto rounded-lg
-               bg-white"
+               bg-white flex flex-col gap-y-2"
         >
           <div className="h-[18%] bg-white flex flex-col items-center text-black font-sans font-bold rounded-lg">
             <div className="w-full pl-[79%] mt-2">
@@ -137,7 +147,7 @@ function Login() {
               }
             }}
             ref={loginForm}
-            className="h-[83%]"
+            className="h-1/2"
             onSubmit={async (event) => {
             
               event.preventDefault(); //Prevent the default from submission behavior
@@ -206,46 +216,49 @@ function Login() {
             </Link>
             <div className="flex items-center justify-center h-10">
               <button
-                className="mt-2 w-[85%] rounded-lg h-full bg-blue-700 text-white text-sm font-sans font-bold hover:bg-blue-500 hover:no-underline "
+                className={
+                  disableSubmmitButton === false
+                    ? "mt-2 w-[85%] rounded-lg h-full bg-blue-700 text-white text-sm font-sans font-bold hover:bg-blue-500 hover:no-underline "
+                    : "mt-2 w-[85%] rounded-lg h-full bg-red-700 text-white text-sm font-sans font-bold hover:bg-red-800 hover:no-underline "
+                }
                 type="submit"
                 disabled={disableSubmmitButton}
               >
                 <span>Login Now</span>
               </button>
             </div>
-
-            <div className="mt-6 flex items-center justify-center gap-3 ">
-              <h3
-                className="text-gray-500 text-sm font-sans font-bold cursor-default "
-                style={{ userSelect: "none" }}
-              >
-                Do&apos;t have an account?
-              </h3>
-              <Link
-                href={"/register"}
-                onClick={(event) => {
-                  event.preventDefault();
-                  router.push("/register");
-                }}
-              >
-                <button
-                  className="text-blue-600 text-sm
+          </form>
+          <div className="mt-6 flex items-center justify-center gap-3 ">
+            <h3
+              className="text-gray-500 text-sm font-sans font-bold cursor-default "
+              style={{ userSelect: "none" }}
+            >
+              Do&apos;t have an account?
+            </h3>
+            <Link
+              href={"/register"}
+              onClick={(event) => {
+                event.preventDefault();
+                router.push("/register");
+              }}
+            >
+              <button
+                className="text-blue-600 text-sm
                          font-sans font-semibold cursor-pointer
                           hover:underline
                           "
-                >
-                  Sign up!
-                </button>
-              </Link>
-            </div>
-          </form>
+              >
+                Sign up!
+              </button>
+            </Link>
+          </div>
         </FadeIn>
       ) : (
         <FadeOut
           className="w-80
              h-[50%] z-30
               my-auto rounded-lg
-               bg-white"
+               bg-white flex flex-col gap-y-2"
         >
           <div className="h-[18%] bg-white flex flex-col items-center text-black font-sans font-bold rounded-lg">
             <div className="w-full pl-[79%] mt-2">
@@ -269,7 +282,7 @@ function Login() {
               }
             }}
             ref={loginForm}
-            className="h-[83%]"
+            className="h-1/2"
             onSubmit={async (event) => {
               debugger;
               event.preventDefault(); //Prevent the default from submission behavior
@@ -345,32 +358,31 @@ function Login() {
                 <span>Login Now</span>
               </button>
             </div>
-
-            <div className="mt-6 flex items-center justify-center gap-3 ">
-              <h3
-                className="text-gray-500 text-sm font-sans font-bold cursor-default "
-                style={{ userSelect: "none" }}
-              >
-                Do&apos;t have an account?
-              </h3>
-              <Link
-                href={"/register"}
-                onClick={(event) => {
-                  event.preventDefault();
-                  router.push("/register");
-                }}
-              >
-                <button
-                  className="text-blue-600 text-sm
+          </form>
+          <div className="mt-6 flex items-center justify-center gap-3 ">
+            <h3
+              className="text-gray-500 text-sm font-sans font-bold cursor-default "
+              style={{ userSelect: "none" }}
+            >
+              Do&apos;t have an account?
+            </h3>
+            <Link
+              href={"/register"}
+              onClick={(event) => {
+                event.preventDefault();
+                router.push("/register");
+              }}
+            >
+              <button
+                className="text-blue-600 text-sm
                          font-sans font-semibold cursor-pointer
                           hover:underline
                           "
-                >
-                  Sign up!
-                </button>
-              </Link>
-            </div>
-          </form>
+              >
+                Sign up!
+              </button>
+            </Link>
+          </div>
         </FadeOut>
       )}
 

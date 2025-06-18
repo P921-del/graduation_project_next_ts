@@ -2,11 +2,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import "../../Styles/register.css";
+import "../../styles/register.css";
 import { onlyNumbers } from "../../ExternalFunctions/AccountFunctions/HandelInput/HandelInputtyping";
 import SubmitButton from "./submitButton";
 import { useRouter } from "next/navigation";
 
+interface RegisterModel {
+  nameU: string;
+  userName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  address: string;
+}
 const RegisterComponent: React.FC = () => {
   const validateUsername = async (value: string) => {
     try {
@@ -45,9 +53,9 @@ const RegisterComponent: React.FC = () => {
       }
       const data = await response.json();
       if (JSON.parse(data)) {
-        return false; // Email is not unique
+        return true; // Email is not unique
       } else {
-        return true; // Email is unique
+        return false; // Email is unique
       }
     } catch (error) {
       console.error("Error checking email uniqueness:", error);
@@ -88,11 +96,11 @@ const RegisterComponent: React.FC = () => {
       password: "",
       confirmPassword: "",
       address: "",
-      profileImage: null,
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Name is required"),
       phoneNumber: Yup.string().required("Phone number is required"),
+
       userName: Yup.string()
         .required("Username is required")
         .test("Username is already exists", validateUsername),
@@ -100,6 +108,7 @@ const RegisterComponent: React.FC = () => {
         .email("Invalid email")
         .required("Email is required")
         .test("Email is already exists", validateEmail),
+
       password: Yup.string()
         .required("Password is required")
         .min(8, "Password must be at least 8 characters long")
@@ -114,14 +123,6 @@ const RegisterComponent: React.FC = () => {
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), ""], "Passwords must match"),
       address: Yup.string().required("Address is required"),
-
-      profileImage: Yup.mixed()
-        .required("Profile image is required")
-        .test(
-          "file-type",
-          "File must be an image (jpg, jpeg, png)",
-          validateFile
-        ),
     }),
     onSubmit: async (values) => {
       setSubmitButtonStatus({
@@ -130,50 +131,71 @@ const RegisterComponent: React.FC = () => {
         isSubmitted: true,
       });
       try {
-        if (values.profileImage !== null) {
-          // إنشاء FormData وإضافة البيانات إليها
-          const formData = new FormData(
-            registerForm.current !== null ? registerForm.current : undefined
-          );
-          formData.append("nameU", values.name);
-          formData.append("userName", values.userName);
-          formData.append("email", values.email);
-          formData.append("password", values.password);
-          formData.append("confirmPassword", values.confirmPassword);
-          formData.append("phoneNumber", values.phoneNumber);
-          formData.append("address", values.address);
-          formData.append("profileImage", values.profileImage);
-          const response = await fetch(
-            `http://citypulse.runasp.net/api/User/register`,
-            {
-              method: "POST",
-              body: formData, // إرسال البيانات كـ FormData
-            }
-          );
 
-          if (!response.ok) {
+        // إنشاء FormData وإضافة البيانات إليها
+        // const formData = new FormData(
+        //   registerForm.current !== null ? registerForm.current : undefined
+        // );
+        // formData.append("nameU", values.name);
+        // formData.append("userName", values.userName);
+        // formData.append("email", values.email);
+        // formData.append("password", values.password);
+        // formData.append("confirmPassword", values.confirmPassword);
+        // formData.append("phoneNumber", values.phoneNumber);
+        // formData.append("address", values.address);
+        const user: RegisterModel = {
+          nameU: values.name,
+          userName: values.userName,
+          email: values.email,
+          phoneNumber: values.phoneNumber,
+          password: values.password,
+          address: values.address,
+        };
+        const response = await fetch(
+          `http://citypulse.runasp.net/api/User/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(user),
+          }
+        );
+
+        if (!response.ok) {
+          if (response.status === 400) {
+            const data = await response.json();
+
+            if (data.errors.PhoneNumber.length > 0) {
+              console.log(data.errors);
+              formik.setFieldError("phoneNumber", data.errors.PhoneNumber[0]);
+
+            }
+
+            // SyntaxError: Unexpected token 'u', "userName i"... is not valid JSON
+          }
+          setSubmitButtonStatus({
+            loading: false,
+            submitButtonText: "Failed to register", //
+            isSubmitted: true,
+          });
+          //console.log(formData);
+          setTimeout(() => {
             setSubmitButtonStatus({
               loading: false,
-              submitButtonText: "Failed to register", //
-              isSubmitted: true,
+              submitButtonText: "Register",
+              isSubmitted: false,
             });
-            console.log(formData);
-            setTimeout(() => {
-              setSubmitButtonStatus({
-                loading: false,
-                submitButtonText: "Register",
-                isSubmitted: false,
-              });
-              formik.resetForm();
-            }, 2000);
-            throw new Error("Failed to register");
-          }
+            formik.resetForm();
+          }, 2000);
+          throw new Error("Failed to register");
+        } else {
           setSubmitButtonStatus({
             loading: false,
             submitButtonText: "submited successfully", //
             isSubmitted: true,
           });
-          console.log(formData);
+          //console.log(formData);
           setTimeout(() => {
             setSubmitButtonStatus({
               loading: false,
@@ -189,8 +211,26 @@ const RegisterComponent: React.FC = () => {
           console.log(result);
         }
       } catch (error) {
+        if (
+          error instanceof SyntaxError &&
+          error.message.includes(
+            `Unexpected token 'u', "userName i"... is not valid JSON`
+          )
+        ) {
+          formik.setFieldError("userName", "userName is already taken");
+        }
+        if (
+          error instanceof SyntaxError &&
+          error.message.includes(
+            `Unexpected token 'E', "Email is a"... is not valid JSON`
+          )
+        ) {
+          formik.setFieldError("email", "Email is already taken");
+        }
+        console.log("request failed");
         alert("Registration failed");
         console.log(`Fetch erro:`, error);
+        console.log(error);
         setSubmitButtonStatus({
           loading: false,
           submitButtonText: "Failed to register", //
@@ -223,7 +263,6 @@ const RegisterComponent: React.FC = () => {
         email: "",
         password: "",
         address: "",
-        profileImage: "",
       });
     }
   }, [isOpened]);
@@ -235,52 +274,88 @@ const RegisterComponent: React.FC = () => {
           ? "relative main show home flex justify-center items-center"
           : "relative main home flex justify-center items-center"
       }
+      style={{ backgroundImage: "url('/assets/Images/homepage .png')" }}
     >
-      <div className="absolute container pt-4 z-30">
-        <div className="rounded-md w-[90%] pb-4">
-          <form
-            ref={registerForm}
-            className="frm flex flex-col justify-start gap-2 "
-            onSubmit={formik.handleSubmit}
-          >
-            <h1 className="block text-3xl font-bold text-center">Signup</h1>
-            <div className="AllElements grid grid-cols-2">
-              <div className="each_in_grouping">
-                <label htmlFor="firstName">
-                  Name<span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="text"
-                  id="Name"
-                  name="name"
-                />
-                {formik.touched.name && formik.errors.name ? (
-                  <span className="errors">{formik.errors.name}</span>
-                ) : null}
-              </div>
-              <div className="each_in_grouping">
-                <label htmlFor="phoneNumber">
-                  Phone Number<span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.phoneNumber}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  onKeyDown={(event) => {
-                    onlyNumbers(event);
-                  }}
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                />
-                {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                  <span className="errors">{formik.errors.phoneNumber}</span>
-                ) : null}
-              </div>
+      <div className="absolute container pt-20 z-30">
+        <form
+          ref={registerForm}
+          className="mt-40 frm flex flex-col justify-start gap-y-2 pb-5"
+          onSubmit={formik.handleSubmit}
+        >
+          <h1 className="block text-3xl font-bold text-center">Signup</h1>
+          <div className="flex flex-col w-full pl-5">
+            <div className="each_in_grouping mb-3">
+              <label htmlFor="name">
+                Name<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <input
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                type="text"
+                id="name"
+                name="name"
+              />
+              {formik.touched.name && formik.errors.name ? (
+                <span className="errors">{formik.errors.name}</span>
+              ) : null}
+            </div>
 
+            <div className="each_in_grouping mb-3">
+              <label htmlFor="user">
+                UserName<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <input
+                value={formik.values.userName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                type="text"
+                id="user"
+                name="userName"
+              />
+              {formik.touched.userName && formik.errors.userName ? (
+                <span className="errors">{formik.errors.userName}</span>
+              ) : null}
+            </div>
+
+            <div className="each_in_grouping">
+              <label htmlFor="phoneNumber">
+                Phone Number<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <input
+                value={formik.values.phoneNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                onKeyDown={(event) => {
+                  onlyNumbers(event);
+                }}
+                type="text"
+                id="phoneNumber"
+                name="phoneNumber"
+              />
+              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                <span className="errors">{formik.errors.phoneNumber}</span>
+              ) : null}
+            </div>
+
+            <div className="each_in_grouping mb-3">
+              <label htmlFor="address">
+                Addrres<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <textarea
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                id="address"
+                name="address"
+                rows={3}
+              ></textarea>
+              {formik.touched.address && formik.errors.address ? (
+                <span className="errors">{formik.errors.address}</span>
+              ) : null}
+            </div>
+
+            <div className="w-[95%] flex flex-row gap-x-4 mb-3">
               <div className="each_in_grouping">
                 <label htmlFor="email">
                   Email Address
@@ -301,6 +376,10 @@ const RegisterComponent: React.FC = () => {
                 ) : null}
               </div>
               <div className="each_in_grouping">
+
+            <div className="w-[95%] flex flex-row gap-x-4 mb-10">
+              <div className="each_in_grouping">
+
                 <label htmlFor="pass">
                   Password<span className="text-2xl text-red-500">*</span>:
                 </label>
@@ -341,6 +420,8 @@ const RegisterComponent: React.FC = () => {
                   </span>
                 ) : null}
               </div>
+            </div>
+
 
               <div className="each_in_grouping">
                 <label htmlFor="user">
@@ -398,22 +479,25 @@ const RegisterComponent: React.FC = () => {
               />
               <div
                 className="px-2 mt-4
+
                     flex items-center justify-center gap-2  col-span-2
                     bg-transparent h-[15%] md:h-[20%] mb-2
                     "
-              >
-                <h3
-                  className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default"
-                  style={{ userSelect: "none" }}
-                >
-                  Already have an account?
-                </h3>
-                <button
-                  className="text-blue-700 text-base md:text-md
+        >
+          <div className="-translate-y-[110px] flex flex-row gap-x-4">
+            <h3
+              className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default"
+              style={{ userSelect: "none" }}
+            >
+              Already have an account?
+            </h3>
+            <button
+              className="text-blue-700 text-base md:text-md
                         font-sans font-bold
                         hover:underline hover:text-blue-300
                           flex items-center justify-center
                           "
+
                   onClick={() => {
                   
                     setIsOpened(false);
@@ -428,6 +512,7 @@ const RegisterComponent: React.FC = () => {
               </div>
             </div>
           </form>
+
         </div>
       </div>
     </div>

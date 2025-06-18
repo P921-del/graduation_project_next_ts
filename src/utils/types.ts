@@ -9,6 +9,10 @@ export interface register {
   ProfileImage: File;
 }
 export interface login {
-  userName: string | undefined;
+  username: string | undefined;
   password: string | undefined;
+}
+export interface userObject {
+  id: number;
+  roles: string;
 }

@@ -1,11 +1,14 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
 import { backendURL } from "../../lib/Slices/auth/authRules";
-import { login } from "@/utils/types";
+
+import { login, userObject } from "@/utils/types";
+import { ExecException } from "child_process";
 
 export type checkCredentialsExistInSystemType = {
   checked: boolean;
   Token: string | null;
+  user: userObject | null;
 };
 
 // التحقق من وجود البريد الإلكتروني في النظام
@@ -55,7 +58,10 @@ export const checkCredentialsExistInSystem: (
       // استخراج التوكن والتحقق من وجوده
       const Token: string | null = data?.authService?.token || null;
       return { checked: true, Token };
+
     }
+  } catch (e) {
+    console.log(e);
   }
   
   // تأكد من إرجاع قيمة افتراضية في حالة فشل الطلب
