@@ -1,7 +1,9 @@
+import Clinics from "@/components/Clinics/Clinics";
 import Hospitals from "@/components/Hospitals/Hospitals";
 import Restaurants from "@/components/Restaurants/Restaurants";
 import Schools from "@/components/Schools/Schools";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: {
@@ -24,25 +26,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Page Component
 export default async function Service({ params }: Props) {
-  const { serviceName } = await  params;
+  const { serviceName } = await params;
   if (serviceName === ServiceType.Restaurants) {
-    return (
-      <div>
-        <Restaurants />
-      </div>
-    );
+    return <Restaurants />;
   } else if (serviceName === ServiceType.Schools) {
+    return <Schools />;
+  } else if (serviceName === ServiceType.Hospitals) {
+    return <Hospitals />;
+  } else if (serviceName === ServiceType.Clinics) {
     return (
       <div>
-        <Schools />
+        <Clinics />
       </div>
     );
-  }
-  else if (serviceName === ServiceType.Hospitals) {
-    return (
-      <div>
-        <Hospitals/>
-      </div>
-    );
+  } else {
+    notFound();
   }
 }

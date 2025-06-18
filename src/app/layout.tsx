@@ -1,13 +1,10 @@
 "use client";
-//simport type { Metadata } from "next";
-import localFont from "next/font/local";
+// app/layout.tsx
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import localFont from "next/font/local";
+import AppWrapper from "@/components/AppWrapper"; // <- NEW wrapper
 import { Provider } from "react-redux";
 import { store } from "@/lib/store";
-import { usePathname } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -18,70 +15,29 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-export const useMediaQuery = (width: number) => {
-  const [targetReached, setTargetReached] = useState(false);
 
-  const updateTarget = useCallback((e) => {
-    if (e.matches) setTargetReached(true);
-    else setTargetReached(false);
-  }, []);
+// export const metadata = {
+//   title: "City Guide",
+//   description: "enjoy with us",
+// };
 
-  useEffect(() => {
-    const media = window.matchMedia(`(max-width: ${width}px)`);
-    media.addEventListener("change", updateTarget);
-
-    // Check on mount (callback is not called until a change occurs)
-    if (media.matches) setTargetReached(true);
-
-    return () => media.removeEventListener("change", updateTarget);
-  }, []);
-
-  return targetReached;
-};
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
-  const smallScreens = useMediaQuery(600);
+}) {
   return (
-    <Provider store={store}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {pathname === "/unauthorized" ||
-          pathname === "/login" ||
-          pathname === "/register" ? null : (
-            <div>
-              {" "}
-              <Navbar />
-            </div>
-          )}
-
-          <div
-            style={
-              pathname === "/register"
-                ? {
-                    backgroundImage: "url('/assets/Images/homepage2.png')",
-                    backgroundSize: "cover",
-                    height: smallScreens ? "1376px" : "100vh",
-                  }
-                : {}
-            }
-          >
-            {children}
-          </div>
-          {pathname === "/unauthorized" ||
-          pathname === "/login" ||
-          pathname === "/register" ? null : (
-            <div>
-              <Footer />
-            </div>
-          )}
-        </body>
-      </html>
-    </Provider>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-[100vw] overflow-x-hidden`}
+      >
+        <ClientProvider>
+          <AppWrapper>{children}</AppWrapper>
+        </ClientProvider>
+      </body>
+    </html>
   );
+}
+export function ClientProvider({ children }: { children: React.ReactNode }) {
+  return <Provider store={store}>{children}</Provider>;
 }

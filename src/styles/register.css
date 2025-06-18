@@ -1,14 +1,14 @@
 .container {
-    @apply mb-20 mx-auto w-[60%] xl:w-[30%]
+    @apply mb-20 mx-auto w-[60%] xl:w-[40%] rounded-md pb-4
 }
 
 .main {
-    @apply h-full w-full bg-cover
+    @apply h-[1030px] w-full bg-cover
 }
 
 
 .frm {
-    @apply border rounded-md shadow-lg p-5 w-[95%] mx-auto items-center translate-y-2
+    @apply border rounded-md shadow-lg w-full pt-2 items-center translate-y-2
 }
 
 .grouping {
@@ -27,7 +27,7 @@
     @apply mb-2 w-full block font-bold font-serif text-lg
 }
 
-.each_in_grouping input {
+.each_in_grouping input, .each_in_grouping textarea {
     @apply bg-slate-100 border-b rounded-lg pl-2 py-3 w-full focus:shadow-md focus:shadow-blue-400 focus:border-blue-600
 }
 
@@ -48,7 +48,7 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: white;
     z-index: 3;
     opacity: 0;
     pointer-events: none;

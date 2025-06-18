@@ -1,10 +1,12 @@
 import { ActionType } from "@/Reducers/loginReducer/loginReducer";
 import { actionTypes } from "../../Reducers/loginReducer/loginActionTypes";
 import { backendURL } from "../../lib/Slices/auth/authRules";
-import { login } from "@/utils/types";
+import { login, userObject } from "@/utils/types";
+import { ExecException } from "child_process";
 export type checkCredentialsExistInSystemType = {
   checked: boolean;
   Token: string | null;
+  user: userObject | null;
 };
 const checkEmailExistInSystem: (
   emailOruserName: string | undefined
@@ -25,28 +27,41 @@ export const checkCredentialsExistInSystem: (
   emailOruserName,
   password
 ) => {
-  const user: login = {
-    userName: emailOruserName,
-    password: password,
-  };
-  if (emailOruserName !== undefined && password !== undefined) {
-    const response = await fetch("http://citypulse.runasp.net/api/User/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      const Token: string = data.authService.token;
-      if (Token !== null) {
-        return { checked: true, Token: Token };
+  try {
+    const user: login = {
+      username: emailOruserName,
+      password: password,
+    };
+    if (emailOruserName !== undefined && password !== undefined) {
+      debugger;
+      const response = await fetch(
+        "http://citypulse.runasp.net/api/User/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        }
+      );
+      if (response.ok) {
+        debugger;
+        const data = await response.json();
+        const Token: string = data.token;
+        const user: userObject = {
+          id: data.id,
+          roles: data.roles,
+        };
+        if (Token !== null) {
+          return { checked: true, Token: Token, user };
+        }
+        return { checked: true, Token: null, user: null };
+      } else {
+        return { checked: false, Token: null, user: null };
       }
-      return { checked: true, Token: null };
-    } else {
-      return { checked: false, Token: null };
     }
+  } catch (e) {
+    console.log(e);
   }
 };
 // export const setCredentialsExistInSystem: (

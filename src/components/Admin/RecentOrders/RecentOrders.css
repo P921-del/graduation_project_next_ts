@@ -1,0 +1,34 @@
+ .recent-orders {
+     @apply mt-24 md:mt-8 w-[55%] px-5
+ }
+
+ .recent-orders h2 {
+     @apply mb-3
+ }
+
+ .recent-orders table {
+     @apply bg-white w-full rounded-2xl py-5 px-5 text-center shadow-2xl shadow-gray-500 transition-all duration-300 ease-in-out mb-14
+ }
+
+ .recent-orders table:hover {
+     @apply shadow-none
+ }
+
+ .recent-orders table tbody tr td {
+     @apply h-11 border-b border-solid border-gray-200 text-gray-600
+ }
+
+ .recent-orders table tbody tr:last-child td {
+     @apply border-none
+ }
+
+ @media screen and (max-width: 786px) {
+     main .recent-orders {
+         margin: 3rem 0 0 0;
+         @apply relative w-full top-14 mb-20
+     }
+
+     main .recent-orders table {
+         @apply m-0 w-full;
+     }
+ }

@@ -18,7 +18,7 @@ export default function Footer() {
   ];
   const About = [
     { name: "About us", link: "/about" },
-    { name: "Contact us", link: "/Contact" },
+    { name: "Contact us", link: "/contact-us" },
     { name: "Terms and Conditions", link: "/terms" },
     { name: "Privacy Policy", link: "/privacy" },
   ];
@@ -36,7 +36,7 @@ export default function Footer() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="Main bg-gray-800 py-8 ">
+    <div className="Main bg-gray-800 py-8">
       <div className="feildes w-[95%] py-3  mx-auto grid grid-cols-3">
         <div className="social ">
           <h2

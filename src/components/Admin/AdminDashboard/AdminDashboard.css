@@ -1,0 +1,122 @@
+main {
+    @apply bg-gray-100 w-full md:w-[55%] pt-5 px-[1rem]
+}
+
+main .date {
+    @apply bg-white rounded-lg w-32 mt-4 my-2 mx-6 flex flex-row gap-x-[0.5px] items-center
+}
+
+main .date input[type='date'] {
+    @apply bg-transparent text-zinc-700
+}
+
+main .insights {
+    @apply grid grid-cols-3 gap-6
+}
+
+main .insights>div {
+    @apply bg-white rounded-3xl p-5 mt-4 shadow-2xl shadow-gray-500 transition-all duration-300 ease-in-out
+}
+
+main .insights>div:hover {
+    @apply shadow-none
+}
+
+main .insights>div .icon {
+    @apply bg-indigo-500 text-white p-2 rounded-full text-4xl
+}
+
+main .insights>div.expenses .icon {
+    @apply bg-red-600
+}
+
+main .insights>div.income .icon {
+    @apply bg-green-400
+}
+
+main .insights>div .middle {
+    @apply flex items-center justify-between
+}
+
+main .insights>div .middle h3 {
+    @apply mt-4 mr-0 ml-0 mb-2 text-base
+}
+
+main .insights .progress {
+    @apply relative w-[92px] h-[92px] rounded-full
+}
+
+main .insights svg {
+    @apply w-[6rem] h-[6rem]
+}
+
+main .insights svg circle {
+    stroke-linecap: round;
+    stroke-dasharray: 110;
+    stroke-dashoffset: 92;
+    @apply fill-none stroke-indigo-500 stroke-[14] translate-x-[5px] translate-y-[5px]
+}
+
+main .insights .sales svg circle {
+    stroke-dasharray: 200;
+    stroke-dashoffset: -30;
+}
+
+main .insights .expenses svg circle {
+    stroke-dasharray: 80;
+    stroke-dashoffset: 20;
+}
+
+main .insights .income svg circle {
+    stroke-dasharray: 110;
+    stroke-dashoffset: 35;
+}
+
+main .insights .progress .number {
+    @apply absolute top-0 left-0 w-full h-full flex justify-center items-center
+}
+
+main .insights small {
+    @apply mt-6 block
+}
+
+/*Start Recent Orders Section */
+main .recent-orders {
+    @apply mt-8
+}
+
+main .recent-orders h2 {
+    @apply mb-3
+}
+
+main .recent-orders table {
+    @apply bg-white w-full rounded-2xl py-5 px-5 text-center shadow-2xl shadow-gray-500 transition-all duration-300 ease-in-out mb-14
+}
+
+main .recent-orders table:hover {
+    @apply shadow-none
+}
+
+main .recent-orders table tbody tr td {
+    @apply h-11 border-b border-solid border-gray-200 text-gray-600
+}
+
+main .recent-orders table tbody tr:last-child td {
+    @apply border-none
+}
+
+/*End Recent Orders Section */
+
+/*Media Queries*/
+@media screen and (max-width: 1200px) {
+    main .insights {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+@media screen and (max-width: 786px) {
+    main {
+        @apply mt-32 px-5 py-4
+    }
+}
