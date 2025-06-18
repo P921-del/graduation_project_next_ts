@@ -115,7 +115,6 @@ export const ManageRestoProvider :React.FC<ManageRestoProviderProps>=({children}
     return(
         <ManageRestoContext.Provider value={{
             menuItems,
-            
             setID,
             cartItems,
             addItemToCart,

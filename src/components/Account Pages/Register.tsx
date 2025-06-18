@@ -85,7 +85,6 @@ const RegisterComponent: React.FC = () => {
       phoneNumber: "",
       userName: "",
       email: "",
-      confirmEmail: "",
       password: "",
       confirmPassword: "",
       address: "",
@@ -101,9 +100,6 @@ const RegisterComponent: React.FC = () => {
         .email("Invalid email")
         .required("Email is required")
         .test("Email is already exists", validateEmail),
-      confirmEmail: Yup.string()
-        .required("Confirm email is required")
-        .oneOf([Yup.ref("email"), ""], "Emails must match"),
       password: Yup.string()
         .required("Password is required")
         .min(8, "Password must be at least 8 characters long")
@@ -226,7 +222,6 @@ const RegisterComponent: React.FC = () => {
         userName: "",
         email: "",
         password: "",
-        confirmEmail: "",
         address: "",
         profileImage: "",
       });
@@ -306,30 +301,6 @@ const RegisterComponent: React.FC = () => {
                 ) : null}
               </div>
               <div className="each_in_grouping">
-                <label
-                  id="confirmEmailLabel"
-                  className="w-full"
-                  htmlFor="ConfirmEmailAddress"
-                >
-                  Confirm Email Address
-                  <span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.confirmEmail}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="email"
-                  id="ConfirmEmailAddress"
-                  name="confirmEmail"
-                  onCopy={(event) => event.preventDefault()}
-                  onPaste={(event) => event.preventDefault()}
-                />
-                {formik.touched.confirmEmail && formik.errors.confirmEmail ? (
-                  <span className="errors">{formik.errors.confirmEmail}</span>
-                ) : null}
-              </div>
-
-              <div className="each_in_grouping">
                 <label htmlFor="pass">
                   Password<span className="text-2xl text-red-500">*</span>:
                 </label>
@@ -389,7 +360,7 @@ const RegisterComponent: React.FC = () => {
               </div>
 
               <div className="each_in_grouping">
-                <label htmlFor="pass">
+                <label htmlFor="address">
                   Addres<span className="text-2xl text-red-500">*</span>:
                 </label>
                 <input
@@ -449,7 +420,7 @@ const RegisterComponent: React.FC = () => {
                     formik.setTouched(formik.initialTouched);
                     setTimeout(() => {
                       router.push("/login");
-                    }, 30000);
+                    }, 2000);
                   }}
                 >
                   Log in!
