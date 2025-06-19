@@ -46,7 +46,7 @@ return(
                         return(
                     <div key={data.ratingId} className="blogcard min-h-24 px-2 bg-white w-full rounded-md shadow-md mb-2">
                     <div className="top_part w-full flex justify-between  ">
-                        <h1 className="text-2xl font-bold font-serif bg-gray-900 p-2 rounded-lg" >{data.nameU}</h1>
+                        <h1 className="text-2xl font-bold font-serif bg-white/30 p-2 rounded-lg" >{data.nameU}</h1>
                         <div className="flex space-x-1">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <Star

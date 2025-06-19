@@ -269,253 +269,180 @@ const RegisterComponent: React.FC = () => {
 
   return (
     <div
-      className={
-        isOpened
-          ? "relative main show home flex justify-center items-center"
-          : "relative main home flex justify-center items-center"
-      }
-      style={{ backgroundImage: "url('/assets/Images/homepage .png')" }}
+  className={`relative main home flex justify-center items-center ${isOpened ? "show" : ""}`}
+  style={{ backgroundImage: "url('/assets/Images/homepage.png')" }}
+>
+  <div className="absolute container pt-20 z-30">
+    <form
+      ref={registerForm}
+      className="mt-40 frm flex flex-col justify-start gap-y-2 pb-5"
+      onSubmit={formik.handleSubmit}
     >
-      <div className="absolute container pt-20 z-30">
-        <form
-          ref={registerForm}
-          className="mt-40 frm flex flex-col justify-start gap-y-2 pb-5"
-          onSubmit={formik.handleSubmit}
-        >
-          <h1 className="block text-3xl font-bold text-center">Signup</h1>
-          <div className="flex flex-col w-full pl-5">
-            <div className="each_in_grouping mb-3">
-              <label htmlFor="name">
-                Name<span className="text-2xl text-red-500">*</span>:
-              </label>
-              <input
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                type="text"
-                id="name"
-                name="name"
-              />
-              {formik.touched.name && formik.errors.name ? (
-                <span className="errors">{formik.errors.name}</span>
-              ) : null}
-            </div>
+      <h1 className="block text-3xl font-bold text-center">Signup</h1>
 
-            <div className="each_in_grouping mb-3">
-              <label htmlFor="user">
-                UserName<span className="text-2xl text-red-500">*</span>:
-              </label>
-              <input
-                value={formik.values.userName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                type="text"
-                id="user"
-                name="userName"
-              />
-              {formik.touched.userName && formik.errors.userName ? (
-                <span className="errors">{formik.errors.userName}</span>
-              ) : null}
-            </div>
+      {/* Name */}
+      <div className="each_in_grouping mb-3">
+        <label htmlFor="name">
+          Name<span className="text-2xl text-red-500">*</span>:
+        </label>
+        <input
+          value={formik.values.name}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          type="text"
+          id="name"
+          name="name"
+        />
+        {formik.touched.name && formik.errors.name && (
+          <span className="errors">{formik.errors.name}</span>
+        )}
+      </div>
 
-            <div className="each_in_grouping">
-              <label htmlFor="phoneNumber">
-                Phone Number<span className="text-2xl text-red-500">*</span>:
-              </label>
-              <input
-                value={formik.values.phoneNumber}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                onKeyDown={(event) => {
-                  onlyNumbers(event);
-                }}
-                type="text"
-                id="phoneNumber"
-                name="phoneNumber"
-              />
-              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                <span className="errors">{formik.errors.phoneNumber}</span>
-              ) : null}
-            </div>
+      {/* Username */}
+      <div className="each_in_grouping mb-3">
+        <label htmlFor="userName">
+          Username<span className="text-2xl text-red-500">*</span>:
+        </label>
+        <input
+          value={formik.values.userName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          type="text"
+          id="userName"
+          name="userName"
+        />
+        {formik.touched.userName && formik.errors.userName && (
+          <span className="errors">{formik.errors.userName}</span>
+        )}
+      </div>
 
-            <div className="each_in_grouping mb-3">
-              <label htmlFor="address">
-                Addrres<span className="text-2xl text-red-500">*</span>:
-              </label>
-              <textarea
-                value={formik.values.address}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                id="address"
-                name="address"
-                rows={3}
-              ></textarea>
-              {formik.touched.address && formik.errors.address ? (
-                <span className="errors">{formik.errors.address}</span>
-              ) : null}
-            </div>
+      {/* Phone Number */}
+      <div className="each_in_grouping mb-3">
+        <label htmlFor="phoneNumber">
+          Phone Number<span className="text-2xl text-red-500">*</span>:
+        </label>
+        <input
+          value={formik.values.phoneNumber}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          onKeyDown={onlyNumbers}
+          type="text"
+          id="phoneNumber"
+          name="phoneNumber"
+        />
+        {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+          <span className="errors">{formik.errors.phoneNumber}</span>
+        )}
+      </div>
 
-            <div className="w-[95%] flex flex-row gap-x-4 mb-3">
-              <div className="each_in_grouping">
-                <label htmlFor="email">
-                  Email Address
-                  <span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="email"
-                  id="email"
-                  name="email"
-                  onCopy={(event) => event.preventDefault()}
-                  onPaste={(event) => event.preventDefault()}
-                />
-                {formik.touched.email && formik.errors.email ? (
-                  <span className="errors">{formik.errors.email}</span>
-                ) : null}
-              </div>
-              <div className="each_in_grouping">
+      {/* Address */}
+      <div className="each_in_grouping mb-3">
+        <label htmlFor="address">
+          Address<span className="text-2xl text-red-500">*</span>:
+        </label>
+        <textarea
+          value={formik.values.address}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          id="address"
+          name="address"
+          rows={3}
+        ></textarea>
+        {formik.touched.address && formik.errors.address && (
+          <span className="errors">{formik.errors.address}</span>
+        )}
+      </div>
 
-            <div className="w-[95%] flex flex-row gap-x-4 mb-10">
-              <div className="each_in_grouping">
+      {/* Email & Passwords */}
+      <div className="w-[95%] flex flex-row gap-x-4 mb-10">
+        <div className="each_in_grouping w-1/2">
+          <label htmlFor="email">
+            Email<span className="text-2xl text-red-500">*</span>:
+          </label>
+          <input
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            type="email"
+            id="email"
+            name="email"
+            onCopy={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
+          />
+          {formik.touched.email && formik.errors.email && (
+            <span className="errors">{formik.errors.email}</span>
+          )}
+        </div>
 
-                <label htmlFor="pass">
-                  Password<span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="password"
-                  id="pass"
-                  name="password"
-                  onCopy={(event) => event.preventDefault()}
-                  onPaste={(event) => event.preventDefault()}
-                />
-                {formik.touched.password && formik.errors.password ? (
-                  <span className="errors">{formik.errors.password}</span>
-                ) : null}
-              </div>
-
-              <div className="each_in_grouping">
-                <label htmlFor="confirmPassword">
-                  confirmPassword
-                  <span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.confirmPassword}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  onCopy={(event) => event.preventDefault()}
-                  onPaste={(event) => event.preventDefault()}
-                />
-                {formik.touched.confirmPassword &&
-                formik.errors.confirmPassword ? (
-                  <span className="errors">
-                    {formik.errors.confirmPassword}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-
-
-              <div className="each_in_grouping">
-                <label htmlFor="user">
-                  UserName<span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.userName}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="text"
-                  id="user"
-                  name="userName"
-                />
-                {formik.touched.userName && formik.errors.userName ? (
-                  <span className="errors">{formik.errors.userName}</span>
-                ) : null}
-              </div>
-
-              <div className="each_in_grouping">
-                <label htmlFor="address">
-                  Addres<span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="text"
-                  id="address"
-                  name="address"
-                />
-                {formik.touched.address && formik.errors.address ? (
-                  <span className="errors">{formik.errors.address}</span>
-                ) : null}
-              </div>
-              <div className="each_in_grouping col-span-2 mb-10">
-                <label htmlFor="image">
-                  Upload Your Image here
-                  <span className="text-2xl text-red-500">*</span>:
-                </label>
-                <input
-                  value={formik.values.profileImage || ""}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  type="file"
-                  id="profileImage"
-                  name="profileImage"
-                />
-                {formik.touched.profileImage && formik.errors.profileImage ? (
-                  <span className="errors">{formik.errors.profileImage}</span>
-                ) : null}
-              </div>
-              <SubmitButton
-                submitButtonStatus={submitButtonStatus}
-                HandleSubmitButton={HandleSubmitButton}
-              />
-              <div
-                className="px-2 mt-4
-
-                    flex items-center justify-center gap-2  col-span-2
-                    bg-transparent h-[15%] md:h-[20%] mb-2
-                    "
-        >
-          <div className="-translate-y-[110px] flex flex-row gap-x-4">
-            <h3
-              className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default"
-              style={{ userSelect: "none" }}
-            >
-              Already have an account?
-            </h3>
-            <button
-              className="text-blue-700 text-base md:text-md
-                        font-sans font-bold
-                        hover:underline hover:text-blue-300
-                          flex items-center justify-center
-                          "
-
-                  onClick={() => {
-                  
-                    setIsOpened(false);
-                    formik.setTouched(formik.initialTouched);
-                    setTimeout(() => {
-                      router.push("/login");
-                    }, 2000);
-                  }}
-                >
-                  Log in!
-                </button>
-              </div>
-            </div>
-          </form>
-
+        <div className="each_in_grouping w-1/2">
+          <label htmlFor="password">
+            Password<span className="text-2xl text-red-500">*</span>:
+          </label>
+          <input
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            type="password"
+            id="password"
+            name="password"
+            onCopy={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
+          />
+          {formik.touched.password && formik.errors.password && (
+            <span className="errors">{formik.errors.password}</span>
+          )}
         </div>
       </div>
-    </div>
-  );
-};
+
+      {/* Confirm Password */}
+      <div className="each_in_grouping mb-4">
+        <label htmlFor="confirmPassword">
+          Confirm Password<span className="text-2xl text-red-500">*</span>:
+        </label>
+        <input
+          value={formik.values.confirmPassword}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          onCopy={(e) => e.preventDefault()}
+          onPaste={(e) => e.preventDefault()}
+        />
+        {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+          <span className="errors">{formik.errors.confirmPassword}</span>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <SubmitButton
+        submitButtonStatus={submitButtonStatus}
+        HandleSubmitButton={HandleSubmitButton}
+      />
+
+      {/* Already have account */}
+      <div className="px-2 mt-4 flex items-center justify-center gap-2 bg-transparent h-[15%] md:h-[20%] mb-2">
+        <div className="-translate-y-[110px] flex flex-row gap-x-4">
+          <h3 className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default select-none">
+            Already have an account?
+          </h3>
+          <button
+            className="text-blue-700 hover:underline hover:text-blue-300 font-sans font-bold"
+            onClick={() => {
+              setIsOpened(false);
+              formik.setTouched(formik.initialTouched);
+              setTimeout(() => {
+                router.push("/login");
+              }, 2000);
+            }}
+          >
+            Log in!
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+  )
+}
 export default RegisterComponent;

@@ -1,5 +1,5 @@
-"use client";
 // app/layout.tsx
+"use client"
 import "./globals.css";
 import localFont from "next/font/local";
 import AppWrapper from "@/components/AppWrapper"; // <- NEW wrapper
@@ -16,10 +16,20 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// export const metadata = {
-//   title: "City Guide",
-//   description: "enjoy with us",
+import type { Metadata } from 'next';
+
+// export const generateMetadata =  ():Metadata=> {
+//   return {
+//     title:{
+//       default:"City Guide",
+//       template:"%s|City Guide"
+//     },
+//     description: "This is the description of the page.",
+    
+//   };
 // };
+
+
 
 export default function RootLayout({
   children,
