@@ -1,1 +1,1 @@
-export const backendURL = "http://citypulse.runasp.net";
+export const backendURL = "https://citypulse.runasp.net";

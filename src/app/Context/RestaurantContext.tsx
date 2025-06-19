@@ -50,7 +50,7 @@ export const RestaurantProvider: React.FC<RestaurantProviderProps> = ({ children
         const fetchData = async () => {
             try {
                 console.log("⏳ Fetching restaurants...");
-                const response = await fetch('http://citypulse.runasp.net/api/Restaurant');
+                const response = await fetch('https://citypulse.runasp.net/api/Restaurant');
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);

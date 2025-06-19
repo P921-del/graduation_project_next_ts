@@ -12,17 +12,23 @@ import { backendURL } from "@/lib/Slices/auth/authRules";
 
 export default function Navbar() {
   const [profileImage, setProfileImage] = useState<string | undefined>("");
+   const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+    setToken(localStorage.getItem("Token"));
+  }, []);
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/GetUserById/${
-            store.getState().auth.user?.id
+          `https://citypulse.runasp.net/api/User/GetUserById/${
+          userId
           }`,
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${store.getState().auth.userToken}`,
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           }
@@ -121,7 +127,11 @@ export default function Navbar() {
                 />
               )}
             </li>
-            {clickAc && <AccountDropDownList />}
+            {clickAc && <AccountDropDownList sendFromChild={function (change: boolean): void {
+              throw new Error("Function not implemented.");
+            } } sendFromChildTwo={function (click: boolean): void {
+              throw new Error("Function not implemented.");
+            } } />}
           
 r
           </ul>

@@ -136,7 +136,7 @@ export const ManageRestoProvider :React.FC<ManageRestoProviderProps>=({children}
         setUserId(localStorage.getItem("userId"))
         const fetchedOrders =async()=>{
             try{
-                const response = await fetch(`http://citypulse.runasp.net/api/User/AllOrdersByUserID?UserId=${userId}`,{
+                const response = await fetch(`https://citypulse.runasp.net/api/User/AllOrdersByUserID?UserId=${userId}`,{
                     method:'GET',
                     headers:{
                         'Authorization': `Bearer ${token}`
@@ -162,7 +162,7 @@ export const ManageRestoProvider :React.FC<ManageRestoProviderProps>=({children}
         }
          const fetchedAppointments =async()=>{
             try{
-                const response = await fetch(`http://citypulse.runasp.net/api/User/AllAppointmentsByUserID?UserId=${userId}`,{
+                const response = await fetch(`https://citypulse.runasp.net/api/User/AllAppointmentsByUserID?UserId=${userId}`,{
                     method:'GET',
                     headers:{
                         'Authorization': `Bearer ${token}`
@@ -196,7 +196,7 @@ export const ManageRestoProvider :React.FC<ManageRestoProviderProps>=({children}
             console.log("id",id)
             if(!id) return
         try{
-                const response = await fetch(`http://citypulse.runasp.net/api/Restaurant/AllMeals/${id}`);
+                const response = await fetch(`https://citypulse.runasp.net/api/Restaurant/AllMeals/${id}`);
                 const data = await response.json();
                 if(response.ok){
                 setMenuItems(data.$values);
