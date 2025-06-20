@@ -81,7 +81,6 @@ function Login() {
           }, 500);
         }, 2000);
       } else {
-        debugger;
         const checkCredentials = checkCredentialsExistInSystem(
           loginState.email.value,
           loginState.password.value
@@ -149,7 +148,7 @@ function Login() {
             ref={loginForm}
             className="h-1/2"
             onSubmit={async (event) => {
-              debugger;
+            
               event.preventDefault(); //Prevent the default from submission behavior
               // Await the result of the function call
               await HandelLoginSubmitButton(
@@ -284,7 +283,7 @@ function Login() {
             ref={loginForm}
             className="h-1/2"
             onSubmit={async (event) => {
-              debugger;
+             
               event.preventDefault(); //Prevent the default from submission behavior
               // Await the result of the function call
               await HandelLoginSubmitButton(

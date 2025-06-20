@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
-import { store } from "@/lib/store";
 
 export default function AppWrapper({
   children,
@@ -19,7 +18,6 @@ export default function AppWrapper({
   const auth = useSelector((state: any) => state.auth);
   const isLoading = auth === undefined;
   useEffect(() => {
-    debugger;
     if (!isLoading) {
       if (auth !== undefined) {
         if (pathname === "/en/Account/Profile" && !auth.userToken) {
@@ -50,6 +48,7 @@ export default function AppWrapper({
   const hideUIPaths = [
     "/unauthorized",
     "/login",
+    "/en/Account/Profile",
     "/register",
     "/en/doctors/Reservation/create",
     "/admin",

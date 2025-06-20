@@ -2,13 +2,22 @@
 import Link from "next/link";
 import { HiUser } from "react-icons/hi";
 import { AccountDropDownList } from "./AccountDropDownList";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import { ServicesDropDownList } from "./ServicesDropDownList";
 import { redirect } from "next/navigation";
+import { ManageRestoContext } from "@/app/Context/ManageRestoContext";
 import { store } from "../lib/store";
 import { backendURL } from "@/lib/Slices/auth/authRules";
+
 export default function Navbar() {
   const [profileImage, setProfileImage] = useState<string | undefined>("");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+    setToken(localStorage.getItem("Token"));
+  }, []);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -26,7 +35,9 @@ export default function Navbar() {
         );
         if (response.ok) {
           const data = await response.json();
-          if (data.profileImage !== "") setProfileImage(data.profileImage);
+          console.log(data);
+          if (data.profileImage !== "ProfileImage")
+            setProfileImage(data.profileImage);
         }
       } catch (e) {
         console.log("Error", e);
@@ -41,6 +52,7 @@ export default function Navbar() {
   };
   const [clickAc, setClickedAc] = useState<boolean>(false);
   const [clickSer, setClickedSer] = useState<boolean>(false);
+
   const sendFromChildTwo: (click: boolean) => void = (click) => {
     if (click == true) setClickedAc(true);
     else setClickedAc(false);
@@ -116,6 +128,17 @@ export default function Navbar() {
                 />
               )}
             </li>
+            {clickAc && (
+              <AccountDropDownList
+                sendFromChild={function (change: boolean): void {
+                  throw new Error("Function not implemented.");
+                }}
+                sendFromChildTwo={function (click: boolean): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            )}
+            r
           </ul>
         </div>
       </div>
