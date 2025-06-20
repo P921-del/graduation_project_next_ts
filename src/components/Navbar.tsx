@@ -13,7 +13,7 @@ export default function Navbar() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/GetUserById/${
+          `https://citypulse.runasp.net/api/User/GetUserById/${
             store.getState().auth.user?.id
           }`,
           {
@@ -96,17 +96,17 @@ export default function Navbar() {
               }}
               className="relative ml-20 hover:cursor-pointer text-cyan-900 text-2xl font-serif font-bold italic hover:text-cyan-400 duration-500 ease-in-out"
             >
-              {store.getState().auth.userToken === null ? (
-                <HiUser
-                  onMouseLeave={() => setClickedAc(false)}
-                  className="h-10 w-10 text-blue-500 rounded-full shadow-blue-300 shadow-lg hover:shadow-none transition-all duration-300 ease-in-out"
-                />
-              ) : (
+              {store.getState().auth.userToken !== null ? (
                 <img
                   onMouseLeave={() => setClickedAc(false)}
                   className="h-10 w-10 rounded-full shadow-blue-300 shadow-lg hover:shadow-none transition-all duration-300 ease-in-out"
                   src={backendURL + "/" + profileImage}
                   alt="Profile Image"
+                />
+              ) : (
+                <HiUser
+                  onMouseLeave={() => setClickedAc(false)}
+                  className="h-10 w-10 text-blue-500 rounded-full shadow-blue-300 shadow-lg hover:shadow-none transition-all duration-300 ease-in-out"
                 />
               )}
               {clickAc && (

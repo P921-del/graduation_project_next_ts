@@ -123,11 +123,11 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
       className={
         props.pageName === "show-all-doctors"
           ? "w-[40%] flex flex-row bg-gray-200 gap-x-4 overflow-hidden"
-          : "w-full h-[360px] flex flex-row bg-gray-200 gap-x-4 overflow-hidden"
+          : "w-full max-h-[1000px] flex flex-row bg-gray-200 gap-x-4 overflow-hidden"
       }
     >
       <div
-        className="w-[15%] h-full flex justify-center items-center hover:cursor-pointer"
+        className="w-[15%] max-h-[1000px] flex justify-center items-center hover:cursor-pointer"
         onClick={() => {
           console.log(firstDate.getDate());
           debugger;
@@ -170,7 +170,7 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
             className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns="https://cors-anywhere.herokuapp.com/www.w3.org/2000/svg"
           >
             <path
               d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -183,7 +183,7 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
           </svg>
         </div>
       ) : isSlidingInLeft ? (
-        <SlideInLeft className="w-[65%] h-full flex flex-row gap-x-[5%]">
+        <SlideInLeft className="w-[65%]  flex flex-row gap-x-[5%] max-h-[1000px]">
           <div
             className="w-[30%] h-full flex flex-col py-5"
             ref={SlideInLeftFirstDate}
@@ -437,7 +437,7 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
           </div>
         </SlideInLeft>
       ) : isSlidingInRight ? (
-        <SlideInRight className="w-[65%] h-full flex flex-row gap-x-[5%]">
+        <SlideInRight className="w-[65%]  flex flex-row gap-x-[5%] max-h-[1000px]">
           <div
             className="w-[30%] h-full flex flex-col py-5"
             ref={SlideInLeftFirstDate}
@@ -687,7 +687,7 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
           </div>
         </SlideInRight>
       ) : (
-        <div className="w-[65%] h-full flex flex-row gap-x-[5%]">
+        <div className="w-[65%]  flex flex-row gap-x-[5%] max-h-[1000px]">
           <div
             className="w-[30%] h-full flex flex-col py-5"
             ref={SlideInLeftFirstDate}
@@ -937,7 +937,7 @@ function DoctorAppointemnetscardForCheckOut(props: Props) {
           </div>
         </div>
       )}
-      <div className="w-[15%] h-full flex justify-center items-center">
+      <div className="w-[15%] max-h-[1000px] flex justify-center items-center hover:cursor-pointer">
         <div
           className="bg-white w-[70%] h-10 rounded-md border border-gray-100 flex justify-center items-center hover:cursor-pointer"
           onClick={() => {

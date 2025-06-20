@@ -3,7 +3,7 @@ import { store } from "@/lib/store";
 import React, { useEffect, useState } from "react";
 import { FaUserCircle, FaStar, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineDateRange } from "react-icons/md";
-
+import Swal from "sweetalert2";
 type Comment = {
   id: number;
   userName: string;
@@ -49,7 +49,9 @@ const DoctorCommentsAdmin = () => {
       try {
         debugger;
         const response = await fetch(
-          `http://citypulse.runasp.net/api/Clinic/AllDoctorRating /${doctorId}`,
+          `https://citypulse.runasp.net/api/Clinic/AllDoctorRating /${
+            store.getState().auth.user?.id
+          }`,
           {
             method: "GET",
           }
@@ -75,12 +77,46 @@ const DoctorCommentsAdmin = () => {
   }, []);
   const [comments, setComments] = useState<Comment[]>(initialComments);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (ratingId: number) => {
     const confirm = window.confirm(
       "Are you sure you want to delete this comment?"
     );
     if (confirm) {
-      setComments((prev) => prev.filter((c) => c.id !== id));
+      try {
+        const response = await fetch(
+          `https://citypulse.runasp.net/api/ClinicStaf/DeleteCommentById?id=${
+            store.getState().auth.user?.id
+          }`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${store.getState().auth.userToken}`, // Sending the token as a Bearer token
+            },
+          }
+        );
+        if (response.ok) {
+          const filterData = userRatingsState.filter(
+            (userRating) => userRating.ratingId !== ratingId
+          );
+          setUserRatingsState(filterData);
+          Swal.fire({
+            title: "Deleted!",
+            text: "This comment has been successfully deleted ✅",
+            icon: "success",
+            confirmButtonColor: "#2563EB",
+          });
+        } else {
+          Swal.fire({
+            title: "Failed!",
+            text: "The comment does not exist or does not belong to this user!",
+            icon: "error",
+            confirmButtonColor: "#2563EB",
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -88,7 +124,7 @@ const DoctorCommentsAdmin = () => {
     <div className="p-6 shadow-xl rounded-xl bg-blue-50 w-full md:w-[55%] pt-5 px-[1rem]">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Doctor Comments</h2>
 
-      {comments.length === 0 && (
+      {userRatingsState.length === 0 && (
         <p className="text-center text-gray-500">No comments available.</p>
       )}
 

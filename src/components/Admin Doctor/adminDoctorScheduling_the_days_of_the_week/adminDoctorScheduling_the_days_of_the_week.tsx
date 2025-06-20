@@ -1,1776 +1,259 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-const WEEK_DAYS_ORDER = [
-  "Saturday",
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-];
 
-function sortSchedule(schedule: Schedule): Schedule {
-  const entries = Object.entries(schedule);
+import { store } from "@/lib/store";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-  const sortedEntries = entries.sort(([aKey], [bKey]) => {
-    const [aWeek, aDay] = aKey.split("-");
-    const [bWeek, bDay] = bKey.split("-");
-
-    const aWeekNum = parseInt(aWeek.replace("Week", ""));
-    const bWeekNum = parseInt(bWeek.replace("Week", ""));
-
-    if (aWeekNum !== bWeekNum) {
-      return aWeekNum - bWeekNum; // sort by week first
+export default function CreateAppointmentForm() {
+  const [clinicID, setClinicID] = useState<number>(0);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
+            store.getState().auth.user?.id
+          }`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json", // or other content types
+              Authorization: `Bearer ${store.getState().auth.userToken}`, // Sending the token as a Bearer token
+            },
+          }
+        );
+        console.log(response);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          if (Array.isArray(data.$values) && data.$values.length > 0) {
+            setClinicID(data.$values[0].clinicId);
+          }
+        }
+      } catch (e) {
+        console.log("Error", e);
+      }
     }
+    fetchData();
+  }, []);
 
-    return (
-      WEEK_DAYS_ORDER.indexOf(aDay) - WEEK_DAYS_ORDER.indexOf(bDay) // then by day order
-    );
+  const [formData, setFormData] = useState({
+    workingDate: "",
+    startTime: "",
+    endTime: "",
+    waitingHours: 1,
+    status: "Available",
+    appointmentCount: 0,
+    maxAppointments: 15,
+    clinicId: 1,
   });
 
-  // Reconstruct sorted object
-  const sortedSchedule: Schedule = {};
-  for (const [key, value] of sortedEntries) {
-    sortedSchedule[key] = value;
-  }
-
-  return sortedSchedule;
-}
-const todayScheduling = new Date();
-const WEEK_DAYS = [
-  "Saturday",
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-];
-
-interface DaySchedule {
-  dayOff: boolean;
-  start: string;
-  end: string;
-  available: boolean;
-  date?: string;
-}
-
-type Schedule = {
-  [key: string]: DaySchedule; //This means the object can have any number of properties, as long as each key is a string.
-};
-
-type Props = {};
-
-function AdminDoctorScheduling_the_days_of_the_week({}: Props) {
-  const [duration, setDuration] = useState<string>("1");
-  const [schedule, setSchedule] = useState<Schedule>({});
-  const [newDate, setNewDate] = useState<Date>(new Date());
-
-  const generateScheduleTemplate = (weeks: number): Schedule => {
-    const template: Schedule = {};
-    for (let week = 1; week <= weeks; week++) {
-      WEEK_DAYS.forEach((day) => {
-        const key = `Week${week}-${day}`;
-
-        template[key] = {
-          dayOff: false,
-          start: "",
-          end: "",
-          available: false,
-          date: "",
-        };
-      });
-    }
-    return template;
-  };
-
-  const handleDurationChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const weeks = Number(e.target.value);
-    setDuration(e.target.value);
-    setSchedule(generateScheduleTemplate(weeks));
-  };
+  const token = "your_auth_token_here"; // Replace this with actual token (or get from context/localStorage)
 
   const handleChange = (
-    key: string,
-    field: keyof DaySchedule,
-    value: boolean | string
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setSchedule((prev) => ({
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
       ...prev,
-      [key]: {
-        ...prev[key],
-        [field]: value,
-      },
+      [name]:
+        type === "checkbox"
+          ? checked
+            ? "Available"
+            : "Unavailable"
+          : [
+              "clinicId",
+              "waitingHours",
+              "appointmentCount",
+              "maxAppointments",
+            ].includes(name)
+          ? Number(value)
+          : value,
     }));
   };
-useEffect(()=>{},[handleChange]);
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const sortedSchedule = sortSchedule(schedule);
-    /*
-  "Saturday",
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-    */
-    /* start scheduling for one week */
-    if (todayScheduling.getDay() === 0 && Object.keys(schedule).length === 7) {
-      handleChange("Week1-Sunday", "date", todayScheduling.toString());
-      handleChange(
-        "Week1-Monday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 1 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", todayScheduling.toString());
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 2 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", new Date().toString());
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 3 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", new Date().toString());
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 4 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange("Week1-Thursday", "date", new Date().toString());
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 5 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange("Week1-Thursday", "date", "No Date");
-      handleChange("Week1-Friday", "date", new Date().toString());
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 6 &&
-      Object.keys(schedule).length === 7
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange("Week1-Thursday", "date", "No Date");
-      handleChange("Week1-Friday", "date", "No Date");
-      handleChange("Week1-Saturday", "date", new Date().toString());
+    const todayFirst = new Date();
+    todayFirst.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const selectedWorkingDate = new Date(formData.workingDate);
+    selectedWorkingDate.setHours(0, 0, 0, 0);
+    if (selectedWorkingDate < todayFirst) {
+      toast.error("You cannot select a past date for scheduling.");
+      return;
     }
-    /* end scheduling for one week */
-    /* start scheduling for two weeks */
-    if (todayScheduling.getDay() === 0 && Object.keys(schedule).length === 14) {
-      handleChange("Week1-Sunday", "date", todayScheduling.toString());
-      handleChange(
-        "Week1-Monday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 1 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange(
-        "Week1-Monday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 2 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 3 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 4 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 5 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange(
-        "Week1-Thursday",
-        "date",
-       "No Date"
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 6 &&
-      Object.keys(schedule).length === 14
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange(
-        "Week1-Thursday",
-        "date",
-       "No Date"
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        "No Date"
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
+
+    // If working date is today, validate start time
+    if (formData.workingDate >= new Date().toISOString().split("T")[0]) {
+      const [hours, minutes] = formData.startTime.split(":").map(Number);
+      const selectedTime = new Date(formData.workingDate);
+      selectedTime.setHours(hours, minutes, 0, 0);
+
+      if (selectedTime < now) {
+        alert("Start time must be in the future.");
+        return;
+      }
     }
-    /* End scheduling for two weeks */
-    /* Start scheduling for four weeks */
-    if (todayScheduling.getDay() === 0 && Object.keys(schedule).length === 28) {
-      handleChange("Week1-Sunday", "date", todayScheduling.toString());
-      handleChange(
-        "Week1-Monday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(23 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(24 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(25 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(26 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(27 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 1 &&
-      Object.keys(schedule).length === 28
+
+    // Inside handleSubmit:
+    if (
+      formData.workingDate >= new Date().toISOString().split("T")[0] &&
+      formData.startTime &&
+      formData.endTime
     ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange(
-        "Week1-Monday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(23 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(24 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(25 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(26 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 2 &&
-      Object.keys(schedule).length === 28
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange(
-        "Week1-Tuesday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(23 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(24 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(25 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 3 &&
-      Object.keys(schedule).length === 28
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange(
-        "Week1-Wednesday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(23 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(24 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 4 &&
-      Object.keys(schedule).length === 28
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange(
-        "Week1-Thursday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(23 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 5 &&
-      Object.keys(schedule).length === 28
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange("Week1-Thursday", "date", "No Date");
-      handleChange(
-        "Week1-Friday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(22 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-    } else if (
-      todayScheduling.getDay() === 6 &&
-      Object.keys(schedule).length === 28
-    ) {
-      handleChange("Week1-Sunday", "date", "No Date");
-      handleChange("Week1-Monday", "date", "No Date");
-      handleChange("Week1-Tuesday", "date", "No Date");
-      handleChange("Week1-Wednesday", "date", "No Date");
-      handleChange(
-        "Week1-Thursday",
-        "date",
-       "No Date"
-      );
-      handleChange(
-        "Week1-Friday",
-        "date",
-        "No Date"
-      );
-      handleChange(
-        "Week1-Saturday",
-        "date",
-        new Date().toString()
-      );
-      handleChange(
-        "Week2-Sunday",
-        "date",
-        new Date(1 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Monday",
-        "date",
-        new Date(2 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Tuesday",
-        "date",
-        new Date(3 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Wednesday",
-        "date",
-        new Date(4 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Thursday",
-        "date",
-        new Date(5 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Friday",
-        "date",
-        new Date(6 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week2-Saturday",
-        "date",
-        new Date(7 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Sunday",
-        "date",
-        new Date(8 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Monday",
-        "date",
-        new Date(9 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Tuesday",
-        "date",
-        new Date(10 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Wednesday",
-        "date",
-        new Date(11 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Thursday",
-        "date",
-        new Date(12 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Friday",
-        "date",
-        new Date(13 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week3-Saturday",
-        "date",
-        new Date(14 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Sunday",
-        "date",
-        new Date(15 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Monday",
-        "date",
-        new Date(16 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Tuesday",
-        "date",
-        new Date(17 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Wednesday",
-        "date",
-        new Date(18 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Thursday",
-        "date",
-        new Date(19 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Friday",
-        "date",
-        new Date(20 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
-      handleChange(
-        "Week4-Saturday",
-        "date",
-        new Date(21 * 24 * 60 * 60 * 1000 + new Date().getTime()).toString()
-      );
+      const [startH, startM] = formData.startTime.split(":").map(Number);
+      const [endH, endM] = formData.endTime.split(":").map(Number);
+
+      const startDate = new Date(formData.workingDate);
+      const endDate = new Date(formData.workingDate);
+
+      startDate.setHours(startH, startM, 0, 0);
+      endDate.setHours(endH, endM, 0, 0);
+
+      if (endDate <= startDate) {
+        alert("End time must be after start time.");
+        return;
+      }
+
+      // Optional: If workingDate is today, prevent past endTime
+      if (formData.workingDate === new Date().toISOString().split("T")[0]) {
+        const now = new Date();
+        if (endDate < now) {
+          alert("End time must be in the future.");
+          return;
+        }
+      }
     }
-    /* End scheduling for four weeks */
-    console.log("Submitted Schedule:", { schedule, todayScheduling });
 
     try {
-      // Example POST to backend
-      const response = await fetch("/api/doctor-schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ schedule, todayScheduling }),
-      });
+      console.log(formData);
+      const submissionData = {
+        ...formData,
+        clinicId: clinicID,
+      };
+      if (submissionData.clinicId < 1) {
+        alert("You cannot make appointments, now!!");
+      }
+      console.log(submissionData);
+      debugger;
+      const response = await fetch(
+        "https://citypulse.runasp.net/api/ClinicStaf/AddNewDate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${store.getState().auth.userToken}`, // token must be a valid JWT
+          },
+          body: JSON.stringify(submissionData),
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to submit schedule");
-      alert("Schedule saved successfully!");
-    } catch (error) {
-      console.error("Error submitting schedule:", error);
-      alert("An error occurred while saving the schedule.");
+      const data = response;
+      if (response.ok) {
+        alert("Appointment created successfully!");
+        console.log(data);
+        window.location.assign("/admin-doctor-appointments/dashboard");
+      } else {
+        alert("Failed to create appointment");
+        console.error(data);
+      }
+    } catch (err) {
+      console.error("Error:", err);
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-[90%] mx-auto p-6 bg-white shadow-md rounded-xl space-y-6"
+      className="space-y-4 p-6 bg-white rounded-lg shadow-md w-[90%] mx-auto"
     >
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Doctor Schedule Setup
-      </h2>
-
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        <label className="text-gray-700 font-medium">Select Duration:</label>
-        <select
-          value={duration}
-          onChange={handleDurationChange}
-          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-400"
-        >
-          <option value="1">1 Week</option>
-          <option value="2">2 Weeks</option>
-          <option value="4">1 Month (4 Weeks)</option>
-        </select>
+      <div>
+        <label className="block font-semibold">Working Date</label>
+        <input
+          type="date"
+          name="workingDate"
+          value={formData.workingDate}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          required
+          min={new Date().toISOString().split("T")[0]}
+        />
       </div>
 
-      <div className="space-y-4">
-        {Object.keys(schedule).map((key) => {
-          const [weekLabel, day] = key.split("-");
-          const dayData = schedule[key];
-
-          return (
-            <div
-              key={key}
-              className="p-4 border rounded-lg bg-gray-50 hover:shadow-md transition-all"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold text-gray-700">
-                  {weekLabel} - {day}
-                </h3>
-                <label className="flex items-center gap-2 text-sm text-red-600 font-medium">
-                  <input
-                    type="checkbox"
-                    checked={dayData.dayOff}
-                    onChange={(e) =>
-                      handleChange(key, "dayOff", e.target.checked)
-                    }
-                    className="form-checkbox h-4 w-4 text-red-500"
-                  />
-                  Day Off
-                </label>
-              </div>
-
-              {!dayData.dayOff && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      Start Time
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData.start}
-                      onChange={(e) =>
-                        handleChange(key, "start", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      End Time
-                    </label>
-                    <input
-                      type="time"
-                      value={dayData.end}
-                      onChange={(e) => handleChange(key, "end", e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2 mt-6 md:mt-0">
-                    <input
-                      type="checkbox"
-                      checked={dayData.available}
-                      onChange={(e) =>
-                        handleChange(key, "available", e.target.checked)
-                      }
-                      className="form-checkbox h-5 w-5 text-green-500"
-                    />
-                    <span className="text-sm text-green-700 font-medium">
-                      Available
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <div>
+        <label className="block font-semibold">Start Time</label>
+        <input
+          type="time"
+          name="startTime"
+          value={formData.startTime}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          required
+          min={
+            formData.workingDate === new Date().toISOString().split("T")[0]
+              ? new Date().toTimeString().slice(0, 5)
+              : undefined
+          }
+        />
       </div>
 
-      <div className="text-right">
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-all"
-        >
-          Save Schedule
-        </button>
+      <div>
+        <label className="block font-semibold">End Time</label>
+        <input
+          type="time"
+          name="endTime"
+          value={formData.endTime}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          required
+          min={formData.startTime}
+        />
       </div>
+
+      <div>
+        <label className="block font-semibold">Waiting time (in hours)</label>
+        <input
+          type="number"
+          name="waitingHours"
+          value={formData.waitingHours}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          min={0}
+          step={1}
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold">Max Appointments</label>
+        <input
+          type="number"
+          name="maxAppointments"
+          value={formData.maxAppointments}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          min={1}
+          step={1}
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold">Status (Available)</label>
+        <input
+          type="checkbox"
+          name="status"
+          checked={formData.status === "Available"}
+          onChange={handleChange}
+          className="ml-2"
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+      >
+        Create Appointment
+      </button>
     </form>
   );
 }
-
-export default AdminDoctorScheduling_the_days_of_the_week;

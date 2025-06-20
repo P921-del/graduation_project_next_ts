@@ -85,7 +85,7 @@ aside .sidebar div:hover .icon {
 @media screen and (max-width: 786px) {
     aside {
 
-        @apply fixed left-[-100%] bg-white w-[35%] h-[100vh] z-[3] shadow-2xl shadow-white pr-5 hidden;
+        @apply fixed left-[-100%] bg-white w-[35%] z-[3] shadow-2xl shadow-white pr-5 hidden;
         animation: showMenu 400ms ease forwards;
         -webkit-animation: showMenu 400ms ease forwards;
     }

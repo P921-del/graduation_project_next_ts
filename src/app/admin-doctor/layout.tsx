@@ -71,8 +71,15 @@ const AdminLayout = ({
     }
     fetchData();
   }, [store.getState().auth.user?.id]);
+
   return (
-    <div className={"w-full my-0 flex flex-row bg-gray-100"}>
+    <div
+      className={
+        pathname === "/admin-doctor/admin-doctor-medical-services"
+          ? "w-full my-0 flex flex-row bg-blue-50 max-h-[1000px]"
+          : "w-full my-0 flex flex-row bg-blue-50"
+      }
+    >
       <AdminDoctorSidebar
         isMobile={isMobile}
         showSidebar={showSidebar}
@@ -86,6 +93,23 @@ const AdminLayout = ({
               ? { width: "10%" }
               : pathname === "/admin-doctor/admin-doctor-reports"
               ? { width: "25%" }
+              : pathname === "/admin-doctor/admin-doctor-medical-services"
+              ? {
+                  width: "18%",
+                  height: "auto",
+                  maxHeight: "3000px",
+                  overflow: "auto",
+                }
+              : pathname === "/admin-doctor/create-service"
+              ? {
+                  width: "18%",
+                  height: "1000px",
+                }
+              : pathname === "/admin-doctor/update-service"
+              ? {
+                  width: "18%",
+                  height: "1000px",
+                }
               : pathname === "/admin-doctor/admin-doctor-profile" ||
                 pathname === "/admin-doctor/scheduling_the_days_of_the_week"
               ? { display: "none" }
@@ -114,19 +138,10 @@ const AdminLayout = ({
                   <div className="text-muted space-x-0.5">Admin Doctor</div>
                 </p>
               </div>
-              {adminDoctorObject.profileImage !== "ProfileImage" ? (
-                <div className="w-32 h-32 rounded-full border border-gray-100">
-                  <img
-                    src={backendURL + "/" + adminDoctorObject.profileImage}
-                    alt={"AdminDoctor" + adminDoctorObject.nameU}
-                    className="rounded-full"
-                  />
-                </div>
-              ) : (
-                <div className="profile-photo bg-slate-300">
-                  <IoPerson className="text-3xl text-indigo-500 rounded-full" />
-                </div>
-              )}
+
+              <div className="profile-photo bg-slate-300">
+                <IoPerson className="text-3xl text-indigo-500 rounded-full" />
+              </div>
             </div>
           </div>
           {/* END TOP SECTION */}

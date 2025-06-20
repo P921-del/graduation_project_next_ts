@@ -3,6 +3,7 @@ import "./AdminDoctorSidebar.css";
 import { IoClose } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 import { IoPersonSharp } from "react-icons/io5";
+import { FaNotesMedical } from "react-icons/fa";
 import { BsFillFileMedicalFill } from "react-icons/bs";
 import { GoReport } from "react-icons/go";
 import { MdOutlineLogout } from "react-icons/md";
@@ -32,8 +33,10 @@ function AdminSidebar(props: Props) {
       }
       className={
         pathname === "/admin-doctor/admin-doctor-profile"
-          ? "md:w-[10%] xl:w-[20%] h-screen bg-gray-100"
-          : "w-[35%] md:w-[20%] h-screen bg-gray-100"
+          ? "md:w-[10%] xl:w-[20%] bg-white"
+          : pathname === "/admin-doctor/admin-doctor-medical-services"
+          ? "w-[35%] md:w-[20%] bg-white max-h-[1000px]"
+          : "w-[35%] md:w-[20%] bg-white"
       }
     >
       <div className="top">
@@ -140,6 +143,46 @@ function AdminSidebar(props: Props) {
         >
           <BsFillFileMedicalFill className={"icon text-2xl"} />
           <h3>Appointments</h3>
+        </Link>
+        <Link
+          href="/admin-doctor/admin-doctor-medical-services"
+          onClick={(e) => {
+            if (!e.currentTarget.classList.contains("active")) {
+              e.currentTarget.classList.add("active");
+              if (e.currentTarget.parentElement) {
+                for (
+                  let i = 0;
+                  i < e.currentTarget.parentElement.children.length;
+                  i++
+                ) {
+                  if (
+                    e.currentTarget.parentElement.children[i].textContent ===
+                    e.currentTarget.textContent
+                  ) {
+                    continue;
+                  }
+                  if (
+                    e.currentTarget.parentElement.children[
+                      i
+                    ].classList.contains("active")
+                  ) {
+                    e.currentTarget.parentElement.children[i].classList.remove(
+                      "active"
+                    );
+                  }
+                }
+              }
+            }
+            router.push("/admin-doctor/admin-doctor-medical-services");
+          }}
+          className={
+            location.pathname === "/admin-doctor/admin-doctor-medical-services"
+              ? "active Link"
+              : "Link"
+          }
+        >
+          <FaNotesMedical className={"icon text-2xl"} />
+          <h3 className="space-x-1">Medical Services</h3>
         </Link>
         <Link
           href="/admin-doctor/scheduling_the_days_of_the_week"

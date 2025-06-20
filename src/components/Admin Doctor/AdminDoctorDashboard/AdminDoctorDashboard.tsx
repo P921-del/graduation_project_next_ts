@@ -41,7 +41,7 @@ function AdminDashboard() {
       try {
         debugger;
         const response = await fetch(
-          `http://citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
+          `https://citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
             store.getState().auth.user?.id
           }`,
           {
@@ -82,7 +82,7 @@ function AdminDashboard() {
             setAppointmentsWithDoctorAdminState(AppointmentsWithDoctorAdmin);
           }
         } else {
-          toast.success("No appointments found !");
+          toast.error("No appointments found !");
         }
       } catch (e) {
         console.log("Error", e);
@@ -101,7 +101,7 @@ function AdminDashboard() {
     try {
       debugger;
       const response = await fetch(
-        `http://citypulse.runasp.net/api/ClinicStaf/update-status`,
+        `https://citypulse.runasp.net/api/ClinicStaf/update-status`,
         {
           method: "PUT",
           headers: {
@@ -151,7 +151,7 @@ function AdminDashboard() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://citypulse.runasp.net/api/ClinicStaf/DeleteAppointment?AppointmentId=${appointmentId}&clinicId=${clinicId}`,
+            `https://citypulse.runasp.net/api/ClinicStaf/DeleteAppointment?AppointmentId=${appointmentId}&clinicId=${clinicId}`,
             {
               method: "DELETE",
               headers: {
@@ -240,6 +240,7 @@ function AdminDashboard() {
   useEffect(() => {
     setFilteredAppointments(appointmentsWithDoctorAdminState);
   }, [appointmentsWithDoctorAdminState]);
+  useEffect(() => {}, [filteredAppointments]);
   return (
     <main>
       <h1 className="font-sans font-bold text-5xl">Dashboard</h1>
@@ -327,6 +328,32 @@ function AdminDashboard() {
                 latest Booking
               </span>
             </h2>
+            {filteredAppointments.length > 0 ? (
+              <div className="mt-20 mb-20 flex flex-col gap-y-4">
+                {filteredAppointments.map(function (appointment, index) {
+                  return (
+                    <Booking
+                      index={index}
+                      key={appointment.appointmentId.toString()}
+                      appointmentId={appointment.appointmentId}
+                      workingHourId={appointment.workingHourId}
+                      userId={appointment.userId}
+                      clinicId={appointment.clinicId}
+                      patientName={appointment.patientName}
+                      patientImage={""}
+                      patientBookingTime={todayDate.toDateString()}
+                      bookingStatus={appointment.status}
+                      SendFromChild={SendFromChild}
+                      SendFromChildForSecondOnce={SendFromChildToDelete}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-red-300 flex justify-center items-center font-sans font-bold text-black text-4xl h-96 space-x-4 mt-20 rounded-full border border-gray-100">
+                No Appointments with this filter
+              </div>
+            )}
             <div className="mt-20 mb-20 flex flex-col gap-y-4">
               {filteredAppointments.map(function (appointment, index) {
                 return (

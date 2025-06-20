@@ -28,14 +28,15 @@ export const checkCredentialsExistInSystem: (
   password
 ) => {
   try {
+    debugger;
     const user: login = {
       username: emailOruserName,
       password: password,
     };
-    if (emailOruserName !== undefined && password !== undefined) {
-      debugger;
+
+    if (user.username !== "" && user.password !== "") {
       const response = await fetch(
-        "http://citypulse.runasp.net/api/User/login",
+        "https://citypulse.runasp.net/api/User/login",
         {
           method: "POST",
           headers: {
@@ -44,26 +45,38 @@ export const checkCredentialsExistInSystem: (
           body: JSON.stringify(user),
         }
       );
+
       if (response.ok) {
-        debugger;
         const data = await response.json();
         const Token: string = data.token;
         const user: userObject = {
           id: data.id,
           roles: data.roles,
         };
-        if (Token !== null) {
-          return { checked: true, Token: Token, user };
-        }
-        return { checked: true, Token: null, user: null };
-      } else {
-        return { checked: false, Token: null, user: null };
+        return {
+          checked: true,
+          Token: Token || null,
+          user: Token ? user : null,
+        };
       }
     }
+
+    // Fallback return when login fails or inputs are missing
+    return {
+      checked: false,
+      Token: null,
+      user: null,
+    };
   } catch (e) {
     console.log(e);
+    return {
+      checked: false,
+      Token: null,
+      user: null,
+    };
   }
 };
+
 // export const setCredentialsExistInSystem: (
 //   email: string | undefined
 // ) => Promise<object> = async (email) => {

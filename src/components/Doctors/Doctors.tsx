@@ -282,7 +282,7 @@ function Doctors(props: Props) {
           : visiableCount === 4 && getAllDoctors.length >= 1
           ? " bg-blue-50 h-[3110px] z-0 flex flex-col relative"
           : visiableCount === 5 && getAllDoctors.length >= 1
-          ? " bg-blue-50 h-[2800px] z-0 flex flex-col relative"
+          ? " bg-blue-50 h-[2800px] max-h-[3500px] z-0 flex flex-col relative mb-10"
           : getAllDoctors.length === 0 && openTitle
           ? " bg-blue-50 w-full h-[450px] z-0 flex flex-col relative"
           : getAllDoctors.length === 0 && openExaminationFee

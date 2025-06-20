@@ -71,11 +71,11 @@ function Doctors(props: Props) {
           <div
             className={
               patrik_hand.className +
-              " bg-blue-50 pl-[27%] w-full lg:h-[450px] flex flex-row relative"
+              " bg-blue-50 pl-[27%] w-full lg:max-h-[1000px] flex flex-row relative"
             }
             key={doctor.doctorId}
           >
-            <div className="bg-white rounded-tl-xl rounded-tr-xl w-[20%] h-full flex items-center justify-center">
+            <div className="bg-white rounded-tl-xl rounded-tr-xl w-[20%] max-h-full flex items-center justify-center">
               <img
                 className="w-40 h-40 border border-gray-300 rounded-full"
                 src={doctor.profileImage}
@@ -175,7 +175,7 @@ function Doctors(props: Props) {
                   Mintues
                 </h4>
               </div>
-              <div className="flex flex-row gap-x-1 text-blue-600">
+              <div className="flex flex-row gap-x-1 text-blue-600 mb-10">
                 <FiPhone className="text-4xl" />
                 <h4
                   className={

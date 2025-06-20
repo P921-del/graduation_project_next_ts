@@ -86,7 +86,7 @@ function Login() {
           loginState.email.value,
           loginState.password.value
         );
-        if ((await checkCredentials).checked) {
+        if ((await checkCredentials)?.checked) {
           const payload = {
             userToken: (await checkCredentials).Token,
             user: (await checkCredentials).user,

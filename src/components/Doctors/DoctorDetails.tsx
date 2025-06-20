@@ -88,7 +88,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const secondResponse = await fetch(
-          `http://citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
         );
         const fetchedData = await secondResponse.json();
         const doctorServices: ServiceProvidedByDoctor[] =
@@ -161,7 +161,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const firstResponse = await fetch(
-          `http://citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.DoctorObject.clinicId}`
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.DoctorObject.clinicId}`
         );
         const data = await firstResponse.json();
         if (Array.isArray(data?.workingHour?.$values)) {
@@ -184,7 +184,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
               };
             });
           const secondResponse = await fetch(
-            `http://citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
+            `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
           );
           const fetchedData = await secondResponse.json();
           const doctorServices: ServiceProvidedByDoctor[] =
@@ -257,7 +257,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
             appointmentDetails: appointmentDetails,
           };
           const response = await fetch(
-            `http://citypulse.runasp.net/api/Clinic/CreateAppointment`,
+            `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/CreateAppointment`,
             {
               method: "POST",
               headers: {
@@ -288,7 +288,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/Clinic/AllDoctorRating /${props.DoctorObject.doctorId}`,
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/AllDoctorRating /${props.DoctorObject.doctorId}`,
           {
             method: "GET",
           }
@@ -334,7 +334,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
           value: rating,
         };
         const response = await fetch(
-          `http://citypulse.runasp.net/api/Clinic/CreateDoctorRating`,
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/CreateDoctorRating`,
           {
             method: "POST",
             headers: {
@@ -627,7 +627,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
                       })
                     : null} */}
                 </p>
-                <div className="mt-10 flex flex-row gap-x-1 font-sans text-4xl">
+                <div className="my-5 flex flex-row gap-x-1 font-sans text-4xl">
                   {DoctorStars(props.DoctorObject.retaing).map((item) => item)}
                 </div>
               </div>
@@ -727,181 +727,111 @@ const DoctorDetailsClientComponent = (props: Props) => {
                   <span>Rating</span>
                 </h4>
               </section>
+              {userRatingsState.length > 0 ? (
+                <section className="h-[50%] rounded-br-xl rounded-bl-xl bg-white flex flex-col ">
+                  {userRatingsState.map((userRating) => {
+                    const ratingDate = new Date(userRating.ratingDate);
+                    return (
+                      <section
+                        key={userRating.ratingId}
+                        className="h-40 p-5 pr-28 border-t-2 border-gray-200 flex flex-row justify-between"
+                      >
+                        <section>
+                          <div className="flex flex-row justify-start gap-x-2 font-sans text-2xl">
+                            {DoctorStars(userRating.ratingValue).map(
+                              (item) => item
+                            )}
+                          </div>
+                          <h5 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-2">
+                            <span>overall</span>
+                            <span>Rating</span>
+                          </h5>
+                          <h6 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-1">
+                            &#39;{userRating.review}&#39;
+                          </h6>
+                          <h6 className="font-sans font-thin text-gray-600 text-sm flex flex-row justify-start gap-x-2 mt-1">
+                            {userRating.nameU}
+                          </h6>
 
-              <section className="h-[50%] rounded-br-xl rounded-bl-xl bg-white flex flex-col ">
-                {userRatingsState.map((userRating) => {
-                  const ratingDate = new Date(userRating.ratingDate);
-                  return (
-                    <section
-                      key={userRating.ratingId}
-                      className="h-40 p-5 pr-28 border-t-2 border-gray-200 flex flex-row justify-between"
-                    >
-                      <section>
-                        <div className="flex flex-row justify-start gap-x-2 font-sans text-2xl">
-                          {DoctorStars(userRating.ratingValue).map(
-                            (item) => item
-                          )}
-                        </div>
-                        <h5 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-2">
-                          <span>overall</span>
-                          <span>Rating</span>
-                        </h5>
-                        <h6 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-1">
-                          &#39;{userRating.review}&#39;
-                        </h6>
-                        <h6 className="font-sans font-thin text-gray-600 text-sm flex flex-row justify-start gap-x-2 mt-1">
-                          {userRating.nameU}
-                        </h6>
+                          <h6 className="font-sans font-semibold text-gray-700 text-sm flex flex-row justify-start gap-x-[2px]">
+                            <span className="mr-1">
+                              {ratingDate.getDate() === 0
+                                ? "Sunday"
+                                : ratingDate.getDate() === 1
+                                ? "Monday"
+                                : ratingDate.getDate() === 2
+                                ? "Tuesday"
+                                : ratingDate.getDate() === 3
+                                ? "Wednesday"
+                                : ratingDate.getDate() === 4
+                                ? "Thursday"
+                                : ratingDate.getDate() === 5
+                                ? "Friday"
+                                : ratingDate.getDate() === 6
+                                ? "Saturday"
+                                : null}
+                              ,
+                            </span>
+                            <span className="mr-0.5">
+                              {(ratingDate.getMonth() + 1).toString()}
+                            </span>
+                            <span>
+                              {ratingDate.getMonth() === 0
+                                ? "January"
+                                : ratingDate.getMonth() === 1
+                                ? "February"
+                                : ratingDate.getMonth() === 2
+                                ? "March"
+                                : ratingDate.getMonth() === 3
+                                ? "April"
+                                : ratingDate.getMonth() === 4
+                                ? "May"
+                                : ratingDate.getMonth() === 5
+                                ? "June"
+                                : ratingDate.getMonth() === 6
+                                ? "July"
+                                : ratingDate.getMonth() === 7
+                                ? "August"
+                                : ratingDate.getMonth() === 8
+                                ? "September"
+                                : ratingDate.getMonth() === 9
+                                ? "October"
+                                : ratingDate.getMonth() === 10
+                                ? "November"
+                                : ratingDate.getMonth() === 11
+                                ? "December"
+                                : null}
+                            </span>
+                            <span className="mr-2">
+                              {ratingDate.getFullYear().toString()}
+                            </span>
 
-                        <h6 className="font-sans font-semibold text-gray-700 text-sm flex flex-row justify-start gap-x-[2px]">
-                          <span className="mr-1">
-                            {ratingDate.getDate() === 0
-                              ? "Sunday"
-                              : ratingDate.getDate() === 1
-                              ? "Monday"
-                              : ratingDate.getDate() === 2
-                              ? "Tuesday"
-                              : ratingDate.getDate() === 3
-                              ? "Wednesday"
-                              : ratingDate.getDate() === 4
-                              ? "Thursday"
-                              : ratingDate.getDate() === 5
-                              ? "Friday"
-                              : ratingDate.getDate() === 6
-                              ? "Saturday"
-                              : null}
-                            ,
-                          </span>
-                          <span className="mr-0.5">
-                            {(ratingDate.getMonth() + 1).toString()}
-                          </span>
-                          <span>
-                            {ratingDate.getMonth() === 0
-                              ? "January"
-                              : ratingDate.getMonth() === 1
-                              ? "February"
-                              : ratingDate.getMonth() === 2
-                              ? "March"
-                              : ratingDate.getMonth() === 3
-                              ? "April"
-                              : ratingDate.getMonth() === 4
-                              ? "May"
-                              : ratingDate.getMonth() === 5
-                              ? "June"
-                              : ratingDate.getMonth() === 6
-                              ? "July"
-                              : ratingDate.getMonth() === 7
-                              ? "August"
-                              : ratingDate.getMonth() === 8
-                              ? "September"
-                              : ratingDate.getMonth() === 9
-                              ? "October"
-                              : ratingDate.getMonth() === 10
-                              ? "November"
-                              : ratingDate.getMonth() === 11
-                              ? "December"
-                              : null}
-                          </span>
-                          <span className="mr-2">
-                            {ratingDate.getFullYear().toString()}
-                          </span>
-
-                          <span className="space-x-0.5">
-                            {convertTime(ratingDate.toLocaleString())}
-                          </span>
-                        </h6>
+                            <span className="space-x-0.5">
+                              {convertTime(ratingDate.toLocaleString())}
+                            </span>
+                          </h6>
+                        </section>
+                        <section className="flex flex-col gap-y-4 pt-5">
+                          <button className="w-12 h-14 mx-auto rounded-lg bg-blue-600 text-white text-2xl flex flex-row justify-center items-center hover:cursor-text">
+                            <span className="text-3xl">
+                              {parseFloat(userRating.ratingValue.toFixed(1))}
+                            </span>
+                          </button>
+                          <h4 className="font-sans font-medium text-gray-600 text-md flex flex-row justify-center gap-x-2">
+                            <span>Doctor</span>
+                            <span>Rating</span>
+                          </h4>
+                        </section>
                       </section>
-                      <section className="flex flex-col gap-y-4 pt-5">
-                        <button className="w-12 h-14 mx-auto rounded-lg bg-blue-600 text-white text-2xl flex flex-row justify-center items-center hover:cursor-text">
-                          <span className="text-3xl">
-                            {parseFloat(userRating.ratingValue.toFixed(1))}
-                          </span>
-                        </button>
-                        <h4 className="font-sans font-medium text-gray-600 text-md flex flex-row justify-center gap-x-2">
-                          <span>Doctor</span>
-                          <span>Rating</span>
-                        </h4>
-                      </section>
-                    </section>
-                  );
-                })}
-                <section className="h-40 p-5 pr-28 border-t-2 border-gray-200 flex flex-row justify-between">
-                  <section>
-                    <div className="flex flex-row justify-start gap-x-2 font-sans text-2xl">
-                      {DoctorStars(props.DoctorObject.retaing).map(
-                        (item) => item
-                      )}
-                    </div>
-                    <h5 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-2">
-                      <span>overall</span>
-                      <span>Rating</span>
-                    </h5>
-                    <h6 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-1">
-                      &#39;الدكتور مميز&#39;
-                    </h6>
-                    <h6 className="font-sans font-thin text-gray-600 text-sm flex flex-row justify-start gap-x-2 mt-1">
-                      محمد م.
-                    </h6>
-                    <h6 className="font-sans font-semibold text-gray-700 text-sm flex flex-row justify-start gap-x-[2px]">
-                      <span className="mr-1">Tuesday,</span>
-                      <span className="mr-0.5">4</span>
-                      <span>February</span>
-                      <span className="mr-0.5">2025</span>
-                      <span>11</span>
-                      <span>:</span>
-                      <span className="mr-0.5">30</span>
-                      <span>AM</span>
-                    </h6>
-                  </section>
-                  <section className="flex flex-col gap-y-4 pt-5">
-                    <button className="w-12 h-14 mx-auto rounded-lg bg-blue-600 text-white text-2xl flex flex-row justify-center items-center hover:cursor-text">
-                      <span className="text-3xl">5</span>
-                    </button>
-                    <h4 className="font-sans font-medium text-gray-600 text-md flex flex-row justify-center gap-x-2">
-                      <span>Doctor</span>
-                      <span>Rating</span>
-                    </h4>
-                  </section>
+                    );
+                  })}
                 </section>
-                <section className="h-40 p-5 pr-28 border-t-2 border-gray-200 flex flex-row justify-between">
-                  <section>
-                    <div className="flex flex-row justify-start gap-x-2 font-sans text-2xl">
-                      {DoctorStars(props.DoctorObject.retaing).map(
-                        (item) => item
-                      )}
-                    </div>
-                    <h5 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-2">
-                      <span>overall</span>
-                      <span>Rating</span>
-                    </h5>
-                    <h6 className="font-sans font-medium text-gray-600 text-lg flex flex-row justify-start gap-x-2 mt-1">
-                      &#39;الدكتور مميز&#39;
-                    </h6>
-                    <h6 className="font-sans font-thin text-gray-600 text-sm flex flex-row justify-start gap-x-2 mt-1">
-                      محمد م.
-                    </h6>
-                    <h6 className="font-sans font-semibold text-gray-700 text-sm flex flex-row justify-start gap-x-[2px]">
-                      <span className="mr-1">Tuesday,</span>
-                      <span className="mr-0.5">4</span>
-                      <span>February</span>
-                      <span className="mr-0.5">2025</span>
-                      <span>11</span>
-                      <span>:</span>
-                      <span className="mr-0.5">30</span>
-                      <span>AM</span>
-                    </h6>
-                  </section>
-                  <section className="flex flex-col gap-y-4 pt-5">
-                    <button className="w-12 h-14 mx-auto rounded-lg bg-blue-600 text-white text-2xl flex flex-row justify-center items-center hover:cursor-text">
-                      <span className="text-3xl">5</span>
-                    </button>
-                    <h4 className="font-sans font-medium text-gray-600 text-md flex flex-row justify-center gap-x-2">
-                      <span>Doctor</span>
-                      <span>Rating</span>
-                    </h4>
-                  </section>
-                </section>
-              </section>
+              ) : (
+                <div className="h-40 rounded-br-xl rounded-bl-xl bg-white flex justify-center items-center text-red-300 text-bold text-2xl font-sans space-x-4 border-t border-t-gray-100">
+                  {" "}
+                  No Available Comments
+                </div>
+              )}
             </section>
           </section>
         </div>

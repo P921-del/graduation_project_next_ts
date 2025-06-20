@@ -25,7 +25,7 @@ export default function AppWrapper({
         if (pathname === "/en/Account/Profile" && !auth.userToken) {
           router.push("/login");
         } else if (
-          !pathname.startsWith("/admin-doctor") &&
+          !pathname?.startsWith("/admin-doctor") &&
           auth.userToken &&
           auth.user?.roles === "ClinicStaff"
         ) {
@@ -35,10 +35,10 @@ export default function AppWrapper({
           auth.user?.roles === "ClinicStaff"
         ) {
           router.push("/unauthorized");
-        } else if (pathname.startsWith("/admin-doctor") && !auth.userToken) {
+        } else if (pathname?.startsWith("/admin-doctor") && !auth.userToken) {
           router.push("/login");
         } else if (
-          pathname.startsWith("/admin-doctor") &&
+          pathname?.startsWith("/admin-doctor") &&
           auth.user?.roles === "User"
         ) {
           router.push("/unauthorized");
@@ -61,6 +61,9 @@ export default function AppWrapper({
     "/admin-doctor/admin-doctor-profile",
     "/admin-doctor/scheduling_the_days_of_the_week",
     "/admin-doctor/admin-doctor-reports",
+    "/admin-doctor/admin-doctor-medical-services",
+    "/admin-doctor/create-service",
+    "/admin-doctor/update-service",
   ];
 
   const showUI = !hideUIPaths.includes(pathname);

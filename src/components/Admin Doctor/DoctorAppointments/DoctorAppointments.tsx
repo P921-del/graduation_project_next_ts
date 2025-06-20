@@ -89,7 +89,7 @@ function AdminDoctorAppointments() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
+          `https://citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
             store.getState().auth.user?.id
           }`,
           {
@@ -144,7 +144,7 @@ function AdminDoctorAppointments() {
     try {
       debugger;
       const response = await fetch(
-        `http://citypulse.runasp.net/api/ClinicStaf/update-status`,
+        `https://citypulse.runasp.net/api/ClinicStaf/update-status`,
         {
           method: "PUT",
           headers: {

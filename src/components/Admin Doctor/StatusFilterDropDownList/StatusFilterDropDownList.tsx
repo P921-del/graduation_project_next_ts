@@ -12,7 +12,7 @@ interface Props {
   >;
 }
 
-const StatusFilterDropdown: React.FC<Props> = ({ data, onFilter }) => {
+const StatusFilterDropdown: React.FC<Props> = (props: Props) => {
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -20,12 +20,13 @@ const StatusFilterDropdown: React.FC<Props> = ({ data, onFilter }) => {
     setSelectedStatus(status);
 
     if (status === "All") {
-      onFilter(data);
+      props.setFilteredAppointments(props.data);
     } else {
-      const filtered = data.filter(
+      const filtered = props.data.filter(
         (appointment) => appointment.status === status
       );
-      onFilter(filtered);
+      props.setFilteredAppointments(filtered);
+      console.log(filtered);
     }
   };
 

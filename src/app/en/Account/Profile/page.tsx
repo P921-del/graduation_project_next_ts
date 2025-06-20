@@ -85,7 +85,7 @@ export default function UserProfilePage({}: Props) {
       try {
         debugger;
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/EditUser/${
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/EditUser/${
             store.getState().auth.user?.id
           }`,
           {
@@ -183,7 +183,7 @@ export default function UserProfilePage({}: Props) {
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/GetUserById/${
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/GetUserById/${
             store.getState().auth.user?.id
           }`,
           {

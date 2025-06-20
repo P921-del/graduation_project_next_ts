@@ -20,7 +20,7 @@ const RegisterComponent: React.FC = () => {
     try {
       //debugger;
       const response = await fetch(
-        `http://citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}`,
+        `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}`,
         {
           method: "GET",
         }
@@ -43,7 +43,7 @@ const RegisterComponent: React.FC = () => {
   const validateEmail = async (value: string) => {
     try {
       const response = await fetch(
-        `http://citypulse.runasp.net/api/User/IsEmailUnique?email=${value}`,
+        `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/IsEmailUnique?email=${value}`,
         {
           method: "GET",
         }
@@ -150,7 +150,7 @@ const RegisterComponent: React.FC = () => {
           address: values.address,
         };
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/register`,
+          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/register`,
           {
             method: "POST",
             headers: {
