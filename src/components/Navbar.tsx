@@ -22,11 +22,10 @@ export default function Navbar() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `https://citypulse.runasp.net/api/User/GetUserById/${
+          `${backendURL}/api/User/GetUserById/${
             store.getState().auth.user?.id
           }`,
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${store.getState().auth.userToken}`,
               "Content-Type": "application/json",
@@ -44,7 +43,7 @@ export default function Navbar() {
       }
     }
     fetchData();
-  }, [store.getState().auth.user?.id]);
+  }, [userId]);
   const sendFromChild: (change: boolean) => void = (change) => {
     if (change === false) {
       setProfileImage("");

@@ -245,9 +245,10 @@ export default function UserProfileCard() {
         </div>
 
         {/* Service Icons */}
+
         <div className="text-sm text-gray-600 flex flex-wrap justify-center gap-3 mt-2">
           <Link
-            href="/services/Schools"
+            href="/services/schools"
             className="hover:underline hover:text-blue-600 transition"
           >
             🏫 Schools
@@ -259,7 +260,7 @@ export default function UserProfileCard() {
             🏥 Hospitals
           </Link>
           <Link
-            href="/services/Restaurants"
+            href="/services/restaurants"
             className="hover:underline hover:text-blue-600 transition"
           >
             🍽️ Restaurants

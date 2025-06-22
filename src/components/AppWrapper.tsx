@@ -49,6 +49,8 @@ export default function AppWrapper({
     "/unauthorized",
     "/login",
     "/en/Account/Profile",
+    "/en/Account/appointments",
+    "/en/Account/orders",
     "/register",
     "/en/doctors/Reservation/create",
     "/admin",
