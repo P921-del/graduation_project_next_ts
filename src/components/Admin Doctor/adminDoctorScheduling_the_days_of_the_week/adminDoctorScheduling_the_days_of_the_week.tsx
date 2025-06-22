@@ -10,7 +10,7 @@ export default function CreateAppointmentForm() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
+          `https://citypulse.runasp.net/api/ClinicStaf/GetAppointmentsByAdminId/${
             store.getState().auth.user?.id
           }`,
           {
@@ -153,7 +153,7 @@ export default function CreateAppointmentForm() {
       if (response.ok) {
         alert("Appointment created successfully!");
         console.log(data);
-        window.location.assign("/admin-doctor-appointments/dashboard");
+        window.location.assign("/admin-doctor/scheduling_the_days_of_the_week");
       } else {
         alert("Failed to create appointment");
         console.error(data);
@@ -166,7 +166,7 @@ export default function CreateAppointmentForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 p-6 bg-white rounded-lg shadow-md w-[90%] mx-auto"
+      className="space-y-4 p-6 bg-blue-50 rounded-lg shadow-md w-[90%] mx-auto"
     >
       <div>
         <label className="block font-semibold">Working Date</label>

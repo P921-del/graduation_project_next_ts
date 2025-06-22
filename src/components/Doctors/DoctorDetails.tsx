@@ -88,7 +88,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const secondResponse = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
+          `https://citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
         );
         const fetchedData = await secondResponse.json();
         const doctorServices: ServiceProvidedByDoctor[] =
@@ -161,7 +161,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const firstResponse = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.DoctorObject.clinicId}`
+          `https://citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.DoctorObject.clinicId}`
         );
         const data = await firstResponse.json();
         if (Array.isArray(data?.workingHour?.$values)) {
@@ -184,7 +184,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
               };
             });
           const secondResponse = await fetch(
-            `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
+            `https://citypulse.runasp.net/api/Clinic/${props.DoctorObject.clinicId}/services`
           );
           const fetchedData = await secondResponse.json();
           const doctorServices: ServiceProvidedByDoctor[] =
@@ -257,7 +257,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
             appointmentDetails: appointmentDetails,
           };
           const response = await fetch(
-            `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/CreateAppointment`,
+            `https://citypulse.runasp.net/api/Clinic/CreateAppointment`,
             {
               method: "POST",
               headers: {
@@ -288,7 +288,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
     async function fetchData() {
       try {
         const response = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/AllDoctorRating /${props.DoctorObject.doctorId}`,
+          `https://citypulse.runasp.net/api/Clinic/AllDoctorRating /${props.DoctorObject.doctorId}`,
           {
             method: "GET",
           }
@@ -334,7 +334,7 @@ const DoctorDetailsClientComponent = (props: Props) => {
           value: rating,
         };
         const response = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/CreateDoctorRating`,
+          `https://citypulse.runasp.net/api/Clinic/CreateDoctorRating`,
           {
             method: "POST",
             headers: {

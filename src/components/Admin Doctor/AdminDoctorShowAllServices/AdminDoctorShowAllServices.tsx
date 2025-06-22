@@ -124,11 +124,7 @@ function AdminDoctorShowAllServices() {
   const pathname = usePathname();
   return (
     <div
-      className={
-        pathname === "/admin-doctor/admin-doctor-medical-services"
-          ? "p-6 mx-auto shadow-xl rounded-xl bg-blue-50 md:w-[62%] pt-10 px-[1rem] max-h-[1000px]"
-          : "p-6 mx-auto shadow-xl rounded-xl bg-blue-50 md:w-[62%] pt-10 px-[1rem]"
-      }
+      className={"p-6 mx-auto bg-blue-50 md:w-[62%] pt-10 px-[1rem] h-max mb-5"}
     >
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-2xl font-bold text-blue-600">Clinic Services</h1>

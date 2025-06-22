@@ -97,7 +97,7 @@ function DoctorReservation(props: Props) {
     async function fetchData() {
       try {
         const firstResponse = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.clinicId}`
+          `https://citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${props.clinicId}`
         );
         const data = await firstResponse.json();
         if (
@@ -121,7 +121,7 @@ function DoctorReservation(props: Props) {
           console.log(doctorReservation);
           setDoctorReservation(doctorReservation);
           const secondResponse = await fetch(
-            `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/${props.clinicId}/services`
+            `https://citypulse.runasp.net/api/Clinic/${props.clinicId}/services`
           );
           const fetchedData = await secondResponse.json();
           const doctorServices: ServiceProvidedByDoctor[] =
@@ -166,7 +166,7 @@ function DoctorReservation(props: Props) {
           appointmentDetails: appointmentDetails,
         };
         const response = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/Clinic/CreateAppointment`,
+          `https://citypulse.runasp.net/api/Clinic/CreateAppointment`,
           {
             method: "POST",
             headers: {

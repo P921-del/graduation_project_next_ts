@@ -11,6 +11,7 @@ import Booking, { BookingStatus } from "../Booking/Booking";
 import toast from "react-hot-toast";
 import StatusFilterDropdown from "../StatusFilterDropDownList/StatusFilterDropDownList";
 import { store } from "@/lib/store";
+import { CodeSquare } from "lucide-react";
 
 export interface AppointmentWithDoctorAdmin {
   appointmentId: number;
@@ -53,14 +54,17 @@ function AdminDashboard() {
           }
         );
         if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          if (Array.isArray(data.$values) && data.$values.length > 0) {
+          const Appointmentsdata = await response.json();
+          console.log(Appointmentsdata);
+          if (
+            Array.isArray(Appointmentsdata.$values) &&
+            Appointmentsdata.$values.length > 0
+          ) {
             const AppointmentsWithDoctorAdmin: AppointmentWithDoctorAdmin[] =
-              data.$values.map((appoitmentDetails) => {
+              Appointmentsdata.$values.map((appoitmentDetails) => {
                 return {
                   appointmentId: appoitmentDetails.appointmentId,
-                  workingHourId: appoitmentDetails.appointmentId,
+                  workingHourId: appoitmentDetails.workingHourId,
                   userId: appoitmentDetails.userId,
                   clinicId: appoitmentDetails.clinicId,
                   totalPrice: appoitmentDetails.totalPrice,
@@ -242,7 +246,7 @@ function AdminDashboard() {
   }, [appointmentsWithDoctorAdminState]);
   useEffect(() => {}, [filteredAppointments]);
   return (
-    <main>
+    <main style={{ marginBottom: "20px", height: "max-content" }}>
       <h1 className="font-sans font-bold text-5xl">Dashboard</h1>
 
       <div className="date">

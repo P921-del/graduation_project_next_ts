@@ -42,7 +42,7 @@ const AdminLayout = ({
     async function fetchData() {
       try {
         const response = await fetch(
-          `http://citypulse.runasp.net/api/User/GetUserById/${
+          `https://citypulse.runasp.net/api/User/GetUserById/${
             store.getState().auth.user?.id
           }`,
           {
@@ -76,7 +76,18 @@ const AdminLayout = ({
     <div
       className={
         pathname === "/admin-doctor/admin-doctor-medical-services"
-          ? "w-full my-0 flex flex-row bg-blue-50 max-h-[1000px]"
+          ? "w-full my-0 flex flex-row bg-blue-50 h-[950px] max-h-[4000px] overflow-auto"
+          : pathname === "/admin-doctor/dashboard" ||
+            pathname === "/admin-doctor"
+          ? "w-full my-0 flex flex-row bg-blue-50 h-[950px] max-h-[4000px] overflow-auto"
+          : pathname === "/admin-doctor/admin-doctor-appointments"
+          ? "w-full my-0 flex flex-row bg-blue-50 h-[950px] max-h-[4000px] overflow-auto"
+          : pathname?.startsWith(
+              "/admin-doctor/scheduling_the_days_of_the_week"
+            )
+          ? "w-full my-0 flex flex-row bg-blue-50 h-[950px]"
+          : pathname?.startsWith("/admin-doctor/update-scheduling-date")
+          ? "w-full my-0 flex flex-row bg-blue-50 h-[950px]"
           : "w-full my-0 flex flex-row bg-blue-50"
       }
     >
@@ -90,6 +101,10 @@ const AdminLayout = ({
         <div
           style={
             pathname === "/admin-doctor/admin-doctor-appointments"
+              ? { width: "10%" }
+              : pathname === "/admin-doctor/show-all-schduling-dates"
+              ? { width: "10%" }
+              : pathname?.startsWith("/admin-doctor/update-scheduling-date")
               ? { width: "10%" }
               : pathname === "/admin-doctor/admin-doctor-reports"
               ? { width: "25%" }
@@ -138,10 +153,19 @@ const AdminLayout = ({
                   <div className="text-muted space-x-0.5">Admin Doctor</div>
                 </p>
               </div>
-
-              <div className="profile-photo bg-slate-300">
-                <IoPerson className="text-3xl text-indigo-500 rounded-full" />
-              </div>
+              {adminDoctorObject.profileImage !== "ProfileImage" ? (
+                <div className="profile-photo bg-slate-300">
+                  <img
+                    src={backendURL + "/" + adminDoctorObject.profileImage}
+                    alt="adminDoctorAvatar"
+                    className="text-3xl text-indigo-500 rounded-full"
+                  />
+                </div>
+              ) : (
+                <div className="profile-photo bg-slate-300">
+                  <IoPerson className="text-3xl text-indigo-500 rounded-full" />
+                </div>
+              )}
             </div>
           </div>
           {/* END TOP SECTION */}

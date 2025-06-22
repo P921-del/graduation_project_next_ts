@@ -222,7 +222,7 @@ interface Props {
 
 export default async function DoctorsPage(props: Props) {
   const response = await fetch(
-    "http://citypulse.runasp.net/api/Clinic/AllDoctors"
+    "https://citypulse.runasp.net/api/Clinic/AllDoctors"
   );
   const data = await response.json();
   const getAllDoctors = data.$values;

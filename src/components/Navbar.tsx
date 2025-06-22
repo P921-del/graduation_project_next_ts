@@ -138,7 +138,6 @@ export default function Navbar() {
                 }}
               />
             )}
-            r
           </ul>
         </div>
       </div>

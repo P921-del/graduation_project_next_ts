@@ -121,11 +121,13 @@ const DoctorCommentsAdmin = () => {
   };
 
   return (
-    <div className="p-6 shadow-xl rounded-xl bg-blue-50 w-full md:w-[55%] pt-5 px-[1rem]">
+    <div className="p-6 bg-blue-50 w-full md:w-[55%] pt-5 px-[1rem] h-max mb-5">
       <h2 className="text-2xl font-bold text-blue-600 mb-6">Doctor Comments</h2>
 
       {userRatingsState.length === 0 && (
-        <p className="text-center text-gray-500">No comments available.</p>
+        <p className="text-center text-gray-500 h-[950px]">
+          No comments available.
+        </p>
       )}
 
       {userRatingsState.map((userRating: userRatingModel) => (

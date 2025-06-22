@@ -63,6 +63,8 @@ export default function AppWrapper({
     "/admin-doctor/admin-doctor-medical-services",
     "/admin-doctor/create-service",
     "/admin-doctor/update-service",
+    "/admin-doctor/show-all-schduling-dates",
+    "/admin-doctor/update-scheduling-date",
   ];
 
   const showUI = !hideUIPaths.includes(pathname);

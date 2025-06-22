@@ -20,7 +20,7 @@ const RegisterComponent: React.FC = () => {
     try {
       //debugger;
       const response = await fetch(
-        `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}`,
+        `https://citypulse.runasp.net/api/User/IsUserNameUnique?userName=${value}`,
         {
           method: "GET",
         }
@@ -43,7 +43,7 @@ const RegisterComponent: React.FC = () => {
   const validateEmail = async (value: string) => {
     try {
       const response = await fetch(
-        `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/IsEmailUnique?email=${value}`,
+        `https://citypulse.runasp.net/api/User/IsEmailUnique?email=${value}`,
         {
           method: "GET",
         }
@@ -131,7 +131,6 @@ const RegisterComponent: React.FC = () => {
         isSubmitted: true,
       });
       try {
-
         // إنشاء FormData وإضافة البيانات إليها
         // const formData = new FormData(
         //   registerForm.current !== null ? registerForm.current : undefined
@@ -152,7 +151,7 @@ const RegisterComponent: React.FC = () => {
           address: values.address,
         };
         const response = await fetch(
-          `https://cors-anywhere.herokuapp.com/citypulse.runasp.net/api/User/register`,
+          `https://citypulse.runasp.net/api/User/register`,
           {
             method: "POST",
             headers: {
@@ -169,7 +168,6 @@ const RegisterComponent: React.FC = () => {
             if (data.errors.PhoneNumber.length > 0) {
               console.log(data.errors);
               formik.setFieldError("phoneNumber", data.errors.PhoneNumber[0]);
-
             }
 
             // SyntaxError: Unexpected token 'u', "userName i"... is not valid JSON
@@ -269,180 +267,183 @@ const RegisterComponent: React.FC = () => {
 
   return (
     <div
-  className={`relative main home flex justify-center items-center ${isOpened ? "show" : ""}`}
-  style={{ backgroundImage: "url('/assets/Images/homepage.png')" }}
->
-  <div className="absolute container pt-20 z-30">
-    <form
-      ref={registerForm}
-      className="mt-40 frm flex flex-col justify-start gap-y-2 pb-5"
-      onSubmit={formik.handleSubmit}
+      className={`relative main home flex justify-center items-center ${
+        isOpened ? "show" : ""
+      }`}
+      style={{ backgroundImage: "url('/assets/Images/homepage.png')" }}
     >
-      <h1 className="block text-3xl font-bold text-center">Signup</h1>
+      <div className="absolute container pt-20 z-30">
+        <form
+          ref={registerForm}
+          className="mt-40 frm flex flex-col justify-start gap-y-2 pb-5"
+          onSubmit={formik.handleSubmit}
+        >
+          <h1 className="block text-3xl font-bold text-center">Signup</h1>
 
-      {/* Name */}
-      <div className="each_in_grouping mb-3">
-        <label htmlFor="name">
-          Name<span className="text-2xl text-red-500">*</span>:
-        </label>
-        <input
-          value={formik.values.name}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          type="text"
-          id="name"
-          name="name"
-        />
-        {formik.touched.name && formik.errors.name && (
-          <span className="errors">{formik.errors.name}</span>
-        )}
-      </div>
+          {/* Name */}
+          <div className="each_in_grouping mb-3">
+            <label htmlFor="name">
+              Name<span className="text-2xl text-red-500">*</span>:
+            </label>
+            <input
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              type="text"
+              id="name"
+              name="name"
+            />
+            {formik.touched.name && formik.errors.name && (
+              <span className="errors">{formik.errors.name}</span>
+            )}
+          </div>
 
-      {/* Username */}
-      <div className="each_in_grouping mb-3">
-        <label htmlFor="userName">
-          Username<span className="text-2xl text-red-500">*</span>:
-        </label>
-        <input
-          value={formik.values.userName}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          type="text"
-          id="userName"
-          name="userName"
-        />
-        {formik.touched.userName && formik.errors.userName && (
-          <span className="errors">{formik.errors.userName}</span>
-        )}
-      </div>
+          {/* Username */}
+          <div className="each_in_grouping mb-3">
+            <label htmlFor="userName">
+              Username<span className="text-2xl text-red-500">*</span>:
+            </label>
+            <input
+              value={formik.values.userName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              type="text"
+              id="userName"
+              name="userName"
+            />
+            {formik.touched.userName && formik.errors.userName && (
+              <span className="errors">{formik.errors.userName}</span>
+            )}
+          </div>
 
-      {/* Phone Number */}
-      <div className="each_in_grouping mb-3">
-        <label htmlFor="phoneNumber">
-          Phone Number<span className="text-2xl text-red-500">*</span>:
-        </label>
-        <input
-          value={formik.values.phoneNumber}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          onKeyDown={onlyNumbers}
-          type="text"
-          id="phoneNumber"
-          name="phoneNumber"
-        />
-        {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-          <span className="errors">{formik.errors.phoneNumber}</span>
-        )}
-      </div>
+          {/* Phone Number */}
+          <div className="each_in_grouping mb-3">
+            <label htmlFor="phoneNumber">
+              Phone Number<span className="text-2xl text-red-500">*</span>:
+            </label>
+            <input
+              value={formik.values.phoneNumber}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              onKeyDown={onlyNumbers}
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+            />
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+              <span className="errors">{formik.errors.phoneNumber}</span>
+            )}
+          </div>
 
-      {/* Address */}
-      <div className="each_in_grouping mb-3">
-        <label htmlFor="address">
-          Address<span className="text-2xl text-red-500">*</span>:
-        </label>
-        <textarea
-          value={formik.values.address}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          id="address"
-          name="address"
-          rows={3}
-        ></textarea>
-        {formik.touched.address && formik.errors.address && (
-          <span className="errors">{formik.errors.address}</span>
-        )}
-      </div>
+          {/* Address */}
+          <div className="each_in_grouping mb-3">
+            <label htmlFor="address">
+              Address<span className="text-2xl text-red-500">*</span>:
+            </label>
+            <textarea
+              value={formik.values.address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              id="address"
+              name="address"
+              rows={3}
+            ></textarea>
+            {formik.touched.address && formik.errors.address && (
+              <span className="errors">{formik.errors.address}</span>
+            )}
+          </div>
 
-      {/* Email & Passwords */}
-      <div className="w-[95%] flex flex-row gap-x-4 mb-10">
-        <div className="each_in_grouping w-1/2">
-          <label htmlFor="email">
-            Email<span className="text-2xl text-red-500">*</span>:
-          </label>
-          <input
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            type="email"
-            id="email"
-            name="email"
-            onCopy={(e) => e.preventDefault()}
-            onPaste={(e) => e.preventDefault()}
+          {/* Email & Passwords */}
+          <div className="w-[95%] flex flex-row gap-x-4 mb-10">
+            <div className="each_in_grouping w-1/2">
+              <label htmlFor="email">
+                Email<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <input
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                type="email"
+                id="email"
+                name="email"
+                onCopy={(e) => e.preventDefault()}
+                onPaste={(e) => e.preventDefault()}
+              />
+              {formik.touched.email && formik.errors.email && (
+                <span className="errors">{formik.errors.email}</span>
+              )}
+            </div>
+
+            <div className="each_in_grouping w-1/2">
+              <label htmlFor="password">
+                Password<span className="text-2xl text-red-500">*</span>:
+              </label>
+              <input
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                type="password"
+                id="password"
+                name="password"
+                onCopy={(e) => e.preventDefault()}
+                onPaste={(e) => e.preventDefault()}
+              />
+              {formik.touched.password && formik.errors.password && (
+                <span className="errors">{formik.errors.password}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="each_in_grouping mb-4">
+            <label htmlFor="confirmPassword">
+              Confirm Password<span className="text-2xl text-red-500">*</span>:
+            </label>
+            <input
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              onCopy={(e) => e.preventDefault()}
+              onPaste={(e) => e.preventDefault()}
+            />
+            {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword && (
+                <span className="errors">{formik.errors.confirmPassword}</span>
+              )}
+          </div>
+
+          {/* Submit Button */}
+          <SubmitButton
+            submitButtonStatus={submitButtonStatus}
+            HandleSubmitButton={HandleSubmitButton}
           />
-          {formik.touched.email && formik.errors.email && (
-            <span className="errors">{formik.errors.email}</span>
-          )}
-        </div>
 
-        <div className="each_in_grouping w-1/2">
-          <label htmlFor="password">
-            Password<span className="text-2xl text-red-500">*</span>:
-          </label>
-          <input
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            type="password"
-            id="password"
-            name="password"
-            onCopy={(e) => e.preventDefault()}
-            onPaste={(e) => e.preventDefault()}
-          />
-          {formik.touched.password && formik.errors.password && (
-            <span className="errors">{formik.errors.password}</span>
-          )}
-        </div>
+          {/* Already have account */}
+          <div className="px-2 mt-4 flex items-center justify-center gap-2 bg-transparent h-[15%] md:h-[20%] mb-2">
+            <div className="-translate-y-[110px] flex flex-row gap-x-4">
+              <h3 className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default select-none">
+                Already have an account?
+              </h3>
+              <button
+                className="text-blue-700 hover:underline hover:text-blue-300 font-sans font-bold"
+                onClick={() => {
+                  setIsOpened(false);
+                  formik.setTouched(formik.initialTouched);
+                  setTimeout(() => {
+                    router.push("/login");
+                  }, 2000);
+                }}
+              >
+                Log in!
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-
-      {/* Confirm Password */}
-      <div className="each_in_grouping mb-4">
-        <label htmlFor="confirmPassword">
-          Confirm Password<span className="text-2xl text-red-500">*</span>:
-        </label>
-        <input
-          value={formik.values.confirmPassword}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          onCopy={(e) => e.preventDefault()}
-          onPaste={(e) => e.preventDefault()}
-        />
-        {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-          <span className="errors">{formik.errors.confirmPassword}</span>
-        )}
-      </div>
-
-      {/* Submit Button */}
-      <SubmitButton
-        submitButtonStatus={submitButtonStatus}
-        HandleSubmitButton={HandleSubmitButton}
-      />
-
-      {/* Already have account */}
-      <div className="px-2 mt-4 flex items-center justify-center gap-2 bg-transparent h-[15%] md:h-[20%] mb-2">
-        <div className="-translate-y-[110px] flex flex-row gap-x-4">
-          <h3 className="text-gray-500 text-base md:text-md font-sans font-bold cursor-default select-none">
-            Already have an account?
-          </h3>
-          <button
-            className="text-blue-700 hover:underline hover:text-blue-300 font-sans font-bold"
-            onClick={() => {
-              setIsOpened(false);
-              formik.setTouched(formik.initialTouched);
-              setTimeout(() => {
-                router.push("/login");
-              }, 2000);
-            }}
-          >
-            Log in!
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-  )
-}
+    </div>
+  );
+};
 export default RegisterComponent;

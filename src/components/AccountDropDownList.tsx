@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { IoPersonOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
+import { MdNoMeals } from "react-icons/md";
+import { BsFillCalendarDateFill } from "react-icons/bs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { store } from "@/lib/store";
@@ -38,6 +40,35 @@ export const AccountDropDownList = (props: Props) => {
                 <span className="space-x-2">My Profile</span>
               </Link>
             </li>
+            <li
+              onClick={() => {
+                router.push("/en/Account/orders");
+              }}
+              className="w-full text-blue-600 pl-2 py-2 border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-blue-700 text-xl font-serif "
+            >
+              <Link
+                className="flex flex-row gap-x-2 hover:translate-x-4 duration-500 ease-in-out"
+                href={"/en/Account/orders"}
+              >
+                <MdNoMeals className="text-2xl" />
+                <span className="space-x-2">My Orders</span>
+              </Link>
+            </li>
+            <li
+              onClick={() => {
+                router.push("/en/Account/appointments");
+              }}
+              className="w-full text-blue-600 pl-2 py-2 border-b border-gray-400  duration-500 ease-in-out hover:brightness-95 mb-1 bg-gray-50 hover:text-blue-700 text-xl font-serif "
+            >
+              <Link
+                className="flex flex-row gap-x-2 hover:translate-x-4 duration-500 ease-in-out"
+                href={"/en/Account/appointments"}
+              >
+                <BsFillCalendarDateFill className="text-2xl" />
+                <span>Appoint...</span>
+              </Link>
+            </li>
+
             <li
               onClick={() => {
                 dispatchStore(logout());

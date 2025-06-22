@@ -34,12 +34,22 @@ function AdminSidebar(props: Props) {
       className={
         pathname === "/admin-doctor/admin-doctor-profile"
           ? "md:w-[10%] xl:w-[20%] bg-white"
+          : pathname === "/admin-doctor/dashboard" ||
+            pathname === "/admin-doctor"
+          ? "md:w-[10%] xl:w-[20%] bg-blue-50"
           : pathname === "/admin-doctor/admin-doctor-medical-services"
           ? "w-[35%] md:w-[20%] bg-white max-h-[1000px]"
           : "w-[35%] md:w-[20%] bg-white"
       }
     >
-      <div className="top">
+      <div
+        className="top"
+        style={
+          pathname === "/admin-doctor/dashboard" || pathname === "/admin-doctor"
+            ? { backgroundColor: "#EFF6FF" }
+            : {}
+        }
+      >
         <div className="logo" onClick={() => router.push("/admin-doctor")}>
           <img
             className="bg-transparent"
@@ -62,7 +72,14 @@ function AdminSidebar(props: Props) {
           <IoClose className="icon" />
         </div>
       </div>
-      <div className="sidebar">
+      <div
+        className="sidebar"
+        style={
+          pathname === "/admin-doctor/dashboard" || pathname === "/admin-doctor"
+            ? { backgroundColor: "#EFF6FF" }
+            : {}
+        }
+      >
         <Link
           href="/admin-doctor/dashboard"
           onClick={(e) => {
@@ -224,6 +241,46 @@ function AdminSidebar(props: Props) {
         >
           <BsFillFileMedicalFill className={"icon text-2xl"} />
           <h3>Scheduling the days of the week</h3>
+        </Link>
+        <Link
+          href="/admin-doctor/show-all-schduling-dates"
+          onClick={(e) => {
+            if (!e.currentTarget.classList.contains("active")) {
+              e.currentTarget.classList.add("active");
+              if (e.currentTarget.parentElement) {
+                for (
+                  let i = 0;
+                  i < e.currentTarget.parentElement.children.length;
+                  i++
+                ) {
+                  if (
+                    e.currentTarget.parentElement.children[i].textContent ===
+                    e.currentTarget.textContent
+                  ) {
+                    continue;
+                  }
+                  if (
+                    e.currentTarget.parentElement.children[
+                      i
+                    ].classList.contains("active")
+                  ) {
+                    e.currentTarget.parentElement.children[i].classList.remove(
+                      "active"
+                    );
+                  }
+                }
+              }
+            }
+            router.push("/admin-doctor/show-all-schduling-dates");
+          }}
+          className={
+            location.pathname === "/admin-doctor/show-all-schduling-dates"
+              ? "active Link"
+              : "Link"
+          }
+        >
+          <BsFillFileMedicalFill className={"icon text-2xl"} />
+          <h3>ِAll Scheduling Dates</h3>
         </Link>
         <Link
           href="/admin-doctor/admin-doctor-reports"

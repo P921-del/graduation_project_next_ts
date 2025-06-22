@@ -9,11 +9,11 @@ type Props = {
 };
 
 async function DoctorDetails(props: Props) {
-  const doctorId = (await props.params).doctorId.split("--")[1];
+  const doctorId = (await props.params).doctorId.split("--")[0];
   const clinicId = (await props.params).doctorId.split("--")[1];
   try {
     const response = await fetch(
-      `http://citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${clinicId}`,
+      `https://citypulse.runasp.net/api/Clinic/DoctorsByClinicId?clinicId=${clinicId}`,
       {
         method: "GET",
       }

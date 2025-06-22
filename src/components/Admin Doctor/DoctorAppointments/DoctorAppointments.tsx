@@ -183,7 +183,7 @@ function AdminDoctorAppointments() {
   }
 
   return (
-    <main style={{ width: "68%" }}>
+    <main style={{ width: "68%" }} className="h-max mb-5">
       <h1
         className="font-sans font-bold text-5xl mb-5"
         style={{ wordSpacing: "1px" }}
