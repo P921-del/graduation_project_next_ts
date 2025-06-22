@@ -17,7 +17,7 @@ export default function Blog({restoId}:{restoId:any}){
         
         const blogData = async()=>{
                 try{
-                const res =await fetch(`http://citypulse.runasp.net/api/Restaurant/AllRestaurantRating /${restoId}`,
+                const res =await fetch(`https://citypulse.runasp.net/api/Restaurant/AllRestaurantRating /${restoId}`,
                     {
                     method: 'GET',
                 }

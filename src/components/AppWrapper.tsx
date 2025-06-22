@@ -59,6 +59,9 @@ export default function AppWrapper({
     "/admin-doctor/admin-doctor-profile",
     "/admin-doctor/scheduling_the_days_of_the_week",
     "/admin-doctor/admin-doctor-reports",
+    "/en/Account/Profile",
+    "/en/Account/Profile/appointments",
+    "/en/Account/Profile/orders",
   ];
 
   const showUI = !hideUIPaths.includes(pathname);

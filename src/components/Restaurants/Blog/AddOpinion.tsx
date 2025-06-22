@@ -41,7 +41,7 @@ const ReviewForm = ({restoId,setAc}:props) => {
                 review: values.reviews 
             };
         
-            const res = await fetch(`http://citypulse.runasp.net/api/Restaurant/CreateRestaurantRating`, {
+            const res = await fetch(`https://citypulse.runasp.net/api/Restaurant/CreateRestaurantRating`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -70,11 +70,11 @@ const ReviewForm = ({restoId,setAc}:props) => {
                     className="absolute top-3 right-3 text-gray-700 text-2xl cursor-pointer hover:text-red-500 transition"
                     onClick={() => setAc(false)}
                 />
-                <h2 className="text-2xl font-semibold text-gray-700 text-center mb-6">تقييم المنتج</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 text-center mb-6">Restaurant Review</h2>
                 <form onSubmit={formik.handleSubmit} className="space-y-4">
                     {/* تقييم النجوم */}
                     <div className="flex flex-col">
-                        <label className="text-gray-700 font-medium mb-2">التقييم:</label>
+                        <label className="text-gray-700 font-medium mb-2">Review :</label>
                         <StarRating value={formik.values.value} onChange={(newValue) => formik.setFieldValue("value", newValue)} />
                         {formik.touched.value && formik.errors.value && (
                             <div className="text-red-500 text-sm mt-1">{formik.errors.value}</div>
@@ -83,7 +83,7 @@ const ReviewForm = ({restoId,setAc}:props) => {
 
                     {/* الرأي */}
                     <div className="flex flex-col">
-                        <label className="text-gray-700 font-medium mb-2">رأيك:</label>
+                        <label className="text-gray-700 font-medium mb-2">Your Comment</label>
                         <textarea
                             {...formik.getFieldProps("reviews")}
                             className="w-full text-black/55  p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -99,7 +99,7 @@ const ReviewForm = ({restoId,setAc}:props) => {
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
                     >
-                        إرسال التقييم
+                        Add Review
                     </button>
                 </form>
             </div>

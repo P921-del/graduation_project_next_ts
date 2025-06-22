@@ -143,9 +143,9 @@ export default function UserProfileCard() {
 
         {/* Service Icons */}
       <div className="text-sm text-gray-600 flex flex-wrap justify-center gap-3 mt-2">
-      <Link href="/services/Schools" className="hover:underline hover:text-blue-600 transition">🏫 Schools</Link>
+      <Link href="/services/schools" className="hover:underline hover:text-blue-600 transition">🏫 Schools</Link>
       <Link href="/services/hospitals" className="hover:underline hover:text-blue-600 transition">🏥 Hospitals</Link>
-      <Link href="/services/Restaurants" className="hover:underline hover:text-blue-600 transition">🍽️ Restaurants</Link>
+      <Link href="/services/restaurants" className="hover:underline hover:text-blue-600 transition">🍽️ Restaurants</Link>
       <Link href="/doctors" className="hover:underline hover:text-blue-600 transition">🩺 Clinics</Link>
 </div>
 

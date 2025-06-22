@@ -12,7 +12,7 @@ import { backendURL } from "@/lib/Slices/auth/authRules";
 
 export default function Navbar() {
   const [profileImage, setProfileImage] = useState<string | undefined>("");
-   const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   useEffect(() => {
     setUserId(localStorage.getItem("userId"));
@@ -22,14 +22,12 @@ export default function Navbar() {
     async function fetchData() {
       try {
         const response = await fetch(
-          `https://citypulse.runasp.net/api/User/GetUserById/${
+          `${backendURL}/api/User/GetUserById/${
           userId
           }`,
           {
-            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
             },
           }
         );
@@ -42,7 +40,7 @@ export default function Navbar() {
       }
     }
     fetchData();
-  }, [store.getState().auth.user?.id]);
+  }, [userId]);
   const sendFromChild: (change: boolean) => void = (change) => {
     if (change === false) {
       setProfileImage("");
